@@ -18,7 +18,6 @@ def candidate_digits(input):
     ])
 
 
-known_digits = {}
 unique_count = 0
 
 content = open("08.txt").read()
@@ -32,7 +31,6 @@ for line in content.split("\n"):
     for item in display.split(" "):
         possible_digits = candidate_digits(item)
         if len(possible_digits) == 1:
-            known_digits[item] = possible_digits.pop()
             unique_count += 1
 
 print(unique_count)
