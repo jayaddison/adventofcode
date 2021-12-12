@@ -13,15 +13,11 @@ for line in content.split("\n"):
 
 def explore(origin, path):
     routes = []
+    lowercase_repeat_exists = False
     cave_visits = defaultdict(lambda: 0)
     for cave in path:
         cave_visits[cave] += 1
-
-    lowercase_repeat_exists = False
-    for cave, count in cave_visits.items():
-        if not cave.islower():
-            continue
-        if count > 1:
+        if cave.islower() and cave_visits[cave] > 1:
             if lowercase_repeat_exists:
                 return routes
             lowercase_repeat_exists = True
