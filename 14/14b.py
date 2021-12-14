@@ -13,7 +13,6 @@ for line in rules.split("\n"):
     rule_map[match] = insertion
 
 counts = defaultdict(lambda: 0)
-char_counts = defaultdict(lambda: 0)
 
 def populate_counts(chain):
     for n in range(len(chain) - 1):
@@ -22,21 +21,29 @@ def populate_counts(chain):
 
 def apply_rules():
     pair_counts = defaultdict(lambda: 0)
-    char_counts = defaultdict(lambda: 0)
-    char_counts[chain[-1]] = 1
     for pair, count in counts.items():
         left, right = pair
         middle = rule_map[pair]
         pair_counts[f"{left}{middle}"] += count
         pair_counts[f"{middle}{right}"] += count
+    return pair_counts
+
+
+def collect_char_counts():
+    char_counts = defaultdict(lambda: 0)
+    char_counts[chain[-1]] = 1
+    for pair, count in counts.items():
+        left, right = pair
+        middle = rule_map[pair]
         char_counts[left] += count
         char_counts[middle] += count
-    return pair_counts, char_counts
+    return char_counts
 
 
 populate_counts(chain)
 for step in range(40):
-    counts, char_counts = apply_rules()
+    char_counts = collect_char_counts()
+    counts = apply_rules()
 
 most_frequent, least_frequent = None, None
 for char in char_counts:
