@@ -45,9 +45,9 @@ def process_literal(payload):
 def process_operator(payload):
     length_type_id = number(payload[0])
     if length_type_id == LENGTH_TYPE_FIXED:
-        length = number(payload[1:16])
+        length = number(payload[1:16]) + 16
         index = 16
-        while index < length + 16:
+        while index < length:
             consumed = process_packet(payload[index:])
             print(f"consumed fixed packet from index {index} length {consumed}; {length} remaining")
             index += consumed
