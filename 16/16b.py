@@ -53,9 +53,6 @@ def process_literal(payload):
     return index, number("".join(bitstring))
 
 def process_operator(payload):
-    if not payload:
-        return 0
-
     values = []
 
     length_type_id = number(payload[0])
