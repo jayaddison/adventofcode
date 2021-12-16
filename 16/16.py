@@ -28,7 +28,7 @@ def hextobitstring(text):
     return "".join(HEX_MAP[char] for char in text)
 
 def number(bitstring):
-    return int(f"0b{bitstring}", base=2)
+    return int(bitstring, base=2)
 
 def process_literal(payload):
     bitstring = []
