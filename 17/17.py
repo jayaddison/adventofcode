@@ -15,7 +15,7 @@ class Probe:
     def is_below(self, target):
         return self.y < target.ymin
 
-    def simulate(self):
+    def finds_target(self, t):
         prev_x = self.x
         hit = False
 
@@ -101,4 +101,4 @@ t = Target(content)
 for velocity_x, expected_steps in t.candidate_x_velocities():
     for velocity_y in t.candidate_y_velocities(expected_steps):
         p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
-        assert p.simulate()
+        assert p.finds_target(t)
