@@ -1,1 +1,1 @@
-target area: x=20..30, y=-10..-5
+target area: x=94..151, y=-156..-103

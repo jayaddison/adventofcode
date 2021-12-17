@@ -25,26 +25,6 @@ class Probe:
     def is_below(self, target):
         return self.y < target.ymin
 
-    def finds_target_horizontally(self, target):
-        prev_x = self.x
-        steps = 0
-
-        while True:
-            self.step()
-            steps += 1
-
-            if target.horizontally_contains(self):
-                return True, steps
-
-            horizontally_stopped = self.x == prev_x
-            horizontally_missed = not target.horizontally_contains(self)
-
-            if horizontally_stopped and horizontally_missed:
-                break
-            prev_x = self.x
-
-        return False, steps
-
     def finds_target(self, target):
         prev_x = self.x
         steps = 0
@@ -66,21 +46,6 @@ class Probe:
             prev_x = self.x
 
         return False, steps
-
-    def candidate_x_velocities(self, target):
-        for target_x in range(target.xmin, target.xmax):
-            range_start = min(0, target_x + 1)
-            range_end = max(0, target_x + 1)
-            for velocity in range(range_start, range_end):
-                p = Probe(velocity_x=velocity)
-                hit, steps = p.finds_target_horizontally(target)
-                if hit:
-                    yield velocity, steps
-
-    def candidate_y_velocities(self, target, expected_steps):
-        expected_drop = triangle(expected_steps)
-        for target_y in range(target.ymin, target.ymax):
-            yield target_y + expected_drop
 
 
 class Target:
@@ -135,12 +100,19 @@ content = open("17.txt").read().strip()
 
 t = Target(content)
 
-p = Probe()
 max_y = 0
-for velocity_x, expected_steps in p.candidate_x_velocities(t):
-    for velocity_y in p.candidate_y_velocities(t, expected_steps):
+for velocity_x in range(0, 50):
+    for velocity_y in range(0, 1000):
         p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
         hit, steps = p.finds_target(t)
-        max_y = max(max_y, p.max_y) if hit else max_y
+        if hit:
+            max_y = max(max_y, p.max_y)
+            if p.max_y == max_y:
+                print(f"{velocity_x},{velocity_y}")
+
+# Answer validation
+p = Probe(velocity_x=15, velocity_y=76)
+hit, _ = p.finds_target(t)
+assert hit
 
 print(max_y)
