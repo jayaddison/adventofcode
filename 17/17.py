@@ -15,22 +15,22 @@ class Probe:
     def is_below(self, target):
         return self.y < target.ymin
 
-    def finds_target(self, t):
+    def finds_target(self, target):
         prev_x = self.x
         hit = False
 
         while True:
-            p.step()
-            within_target = t.contains(p)
+            self.step()
+            within_target = target.contains(self)
             hit = hit or within_target
 
-            print(f"probe is at {p.x}, {p.y}")
+            print(f"probe is at {self.x}, {self.y}")
             print(f"probe is within target: {within_target}")
         
-            horizontally_stopped = p.x == prev_x
-            horizontally_missed = not t.horizontally_contains(p)
+            horizontally_stopped = self.x == prev_x
+            horizontally_missed = not target.horizontally_contains(self)
         
-            if p.is_below(t):
+            if self.is_below(target):
                 print("probe fell below target")
                 break
             if horizontally_stopped and horizontally_missed:
