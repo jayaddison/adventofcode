@@ -1,8 +1,10 @@
 class Probe:
 
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0, y=0, velocity_x=0, velocity_y=0):
         self.x = x
         self.y = y
+        self.velocity_x = velocity_x
+        self.velocity_y = velocity_y
     
     def step(self):
         self.x += self.velocity_x
@@ -54,3 +56,5 @@ content = open("17.txt").read().strip()
 
 p = Probe()
 t = Target(content)
+
+p.step()
