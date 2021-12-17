@@ -71,6 +71,16 @@ class Target:
         within_y = self.vertically_contains(probe)
         return within_x and within_y
 
+    def candidate_x_velocities(self):
+        for velocity in range(self.xmin, self.xmax):
+            expected_steps = 1
+            yield velocity, expected_steps
+
+    def candidate_y_velocities(self, expected_steps):
+        if expected_steps == 1:
+            for velocity in range(self.ymin, self.ymax):
+                yield velocity
+
 # Tests
 p = Probe(x=25, y=-7)
 t = Target("target area: x=20..30, y=-10..-5")
@@ -86,9 +96,9 @@ assert p.is_below(t)
 # Program
 content = open("17.txt").read().strip()
 
-p = Probe()
 t = Target(content)
 
-result = p.simulate()
-
-print(f"probe {'DID' if result else 'DID NOT'} hit the target")
+for velocity_x, expected_steps in t.candidate_x_velocities():
+    for velocity_y in t.candidate_y_velocities(expected_steps):
+        p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
+        assert p.simulate()
