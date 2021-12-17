@@ -10,12 +10,14 @@ class Probe:
     def __init__(self, x=0, y=0, velocity_x=0, velocity_y=0):
         self.x = x
         self.y = y
+        self.max_y = y
         self.velocity_x = velocity_x
         self.velocity_y = velocity_y
 
     def step(self):
         self.x += self.velocity_x
         self.y += self.velocity_y
+        self.max_y = max(self.max_y, self.y)
         if self.velocity_x != 0:
             self.velocity_x += (1 if self.velocity_x < 0 else -1)
         self.velocity_y -= 1
@@ -76,9 +78,9 @@ class Probe:
                     yield velocity, steps
 
     def candidate_y_velocities(self, target, expected_steps):
-        if expected_steps == 1:
-            for velocity in range(target.ymin, target.ymax):
-                yield velocity
+        expected_drop = triangle(expected_steps)
+        for target_y in range(target.ymin, target.ymax):
+            yield target_y + expected_drop
 
 
 class Target:
@@ -134,8 +136,11 @@ content = open("17.txt").read().strip()
 t = Target(content)
 
 p = Probe()
+max_y = 0
 for velocity_x, expected_steps in p.candidate_x_velocities(t):
     for velocity_y in p.candidate_y_velocities(t, expected_steps):
         p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
         hit, steps = p.finds_target(t)
-        assert hit
+        max_y = max(max_y, p.max_y) if hit else max_y
+
+print(max_y)
