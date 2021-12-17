@@ -15,6 +15,23 @@ class Probe:
     def is_below(self, target):
         return self.y < target.ymin
 
+    def simulate(self):
+        prev_x = self.x
+        while True:
+            p.step()
+            print(f"probe is at {p.x}, {p.y}")
+            print(f"probe is within target: {t.contains(p)}")
+        
+            horizontally_stopped = p.x == prev_x
+            horizontally_missed = not t.horizontally_contains(p)
+        
+            if p.is_below(t):
+                print("probe fell below target")
+                break
+            if horizontally_stopped and horizontally_missed:
+                print("probe stopped horizontally outside the target area")
+                break
+
 
 class Target:
 
@@ -66,18 +83,4 @@ content = open("17.txt").read().strip()
 p = Probe()
 t = Target(content)
 
-prev_x = p.x
-while True:
-    p.step()
-    print(f"probe is at {p.x}, {p.y}")
-    print(f"probe is within target: {t.contains(p)}")
-
-    horizontally_stopped = p.x == prev_x
-    horizontally_missed = not t.horizontally_contains(p)
-
-    if p.is_below(t):
-        print("probe fell below target")
-        break
-    if horizontally_stopped and horizontally_missed:
-        print("probe stopped horizontally outside the target area")
-        break
+p.simulate()
