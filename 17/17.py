@@ -17,10 +17,15 @@ class Probe:
 
     def simulate(self):
         prev_x = self.x
+        hit = False
+
         while True:
             p.step()
+            within_target = t.contains(p)
+            hit = hit or within_target
+
             print(f"probe is at {p.x}, {p.y}")
-            print(f"probe is within target: {t.contains(p)}")
+            print(f"probe is within target: {within_target}")
         
             horizontally_stopped = p.x == prev_x
             horizontally_missed = not t.horizontally_contains(p)
@@ -31,6 +36,7 @@ class Probe:
             if horizontally_stopped and horizontally_missed:
                 print("probe stopped horizontally outside the target area")
                 break
+        return hit
 
 
 class Target:
@@ -83,4 +89,6 @@ content = open("17.txt").read().strip()
 p = Probe()
 t = Target(content)
 
-p.simulate()
+result = p.simulate()
+
+print(f"probe {'DID' if result else 'DID NOT'} hit the target")
