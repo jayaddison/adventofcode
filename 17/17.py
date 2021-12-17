@@ -95,10 +95,7 @@ for velocity_x in range(0, 50):
     for velocity_y in range(0, 1000):
         p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
         hit, steps = p.finds_target(t)
-        if hit:
-            max_y = max(max_y, p.max_y)
-            if p.max_y == max_y:
-                print(f"{velocity_x},{velocity_y}")
+        max_y = max(max_y, p.max_y) if hit else max_y
 
 # Answer validation
 p = Probe(velocity_x=15, velocity_y=76)
