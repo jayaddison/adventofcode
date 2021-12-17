@@ -5,7 +5,7 @@ class Probe:
         self.y = y
         self.velocity_x = velocity_x
         self.velocity_y = velocity_y
-    
+
     def step(self):
         self.x += self.velocity_x
         self.y += self.velocity_y
@@ -29,7 +29,7 @@ class Probe:
 
             horizontally_stopped = self.x == prev_x
             horizontally_missed = not target.horizontally_contains(self)
-        
+
             if self.is_below(target):
                 break
             if horizontally_stopped and horizontally_missed:
@@ -72,7 +72,7 @@ class Target:
 
     def horizontally_contains(self, probe):
         return self.xmin <= probe.x <= self.xmax
-        
+
     def vertically_contains(self, probe):
         return self.ymin <= probe.y <= self.ymax
 
