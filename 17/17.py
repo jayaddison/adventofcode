@@ -9,7 +9,8 @@ class Probe:
     def step(self):
         self.x += self.velocity_x
         self.y += self.velocity_y
-        self.velocity_x += (1 if self.velocity_x < 0 else -1)
+        if self.velocity_x != 0:
+            self.velocity_x += (1 if self.velocity_x < 0 else -1)
         self.velocity_y -= 1
 
     def is_below(self, target):
@@ -33,6 +34,7 @@ class Probe:
                 break
             if horizontally_stopped and horizontally_missed:
                 break
+            prev_x = self.x
 
         return False, steps
 
