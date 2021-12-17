@@ -17,26 +17,24 @@ class Probe:
 
     def finds_target(self, target):
         prev_x = self.x
-        hit = False
+        steps = 0
 
         while True:
             self.step()
-            within_target = target.contains(self)
-            hit = hit or within_target
+            steps += 1
 
-            print(f"probe is at {self.x}, {self.y}")
-            print(f"probe is within target: {within_target}")
-        
+            if target.contains(self):
+                return True, steps
+
             horizontally_stopped = self.x == prev_x
             horizontally_missed = not target.horizontally_contains(self)
         
             if self.is_below(target):
-                print("probe fell below target")
                 break
             if horizontally_stopped and horizontally_missed:
-                print("probe stopped horizontally outside the target area")
                 break
-        return hit
+
+        return False, steps
 
     def candidate_x_velocities(self, target):
         for velocity in range(target.xmin, target.xmax):
@@ -98,7 +96,9 @@ content = open("17.txt").read().strip()
 
 t = Target(content)
 
+p = Probe()
 for velocity_x, expected_steps in p.candidate_x_velocities(t):
     for velocity_y in p.candidate_y_velocities(t, expected_steps):
         p = Probe(velocity_x=velocity_x, velocity_y=velocity_y)
-        assert p.finds_target(t)
+        hit, steps = p.finds_target(t)
+        assert hit
