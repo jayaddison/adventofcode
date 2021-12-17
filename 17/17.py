@@ -31,10 +31,16 @@ class Target:
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
+
+    def horizontally_contains(self, probe):
+        return self.xmin <= probe.x <= self.xmax
         
+    def vertically_contains(self, probe):
+        return self.ymin <= probe.y <= self.ymax
+
     def contains(self, probe):
-        within_x = self.xmin <= probe.x <= self.xmax
-        within_y = self.ymin <= probe.y <= self.ymax
+        within_x = self.horizontally_contains(probe)
+        within_y = self.vertically_contains(probe)
         return within_x and within_y
 
 # Tests
