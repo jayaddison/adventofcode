@@ -16,6 +16,26 @@ class Probe:
     def is_below(self, target):
         return self.y < target.ymin
 
+    def finds_target_horizontally(self, target):
+        prev_x = self.x
+        steps = 0
+
+        while True:
+            self.step()
+            steps += 1
+
+            if target.horizontally_contains(self):
+                return True, steps
+
+            horizontally_stopped = self.x == prev_x
+            horizontally_missed = not target.horizontally_contains(self)
+
+            if horizontally_stopped and horizontally_missed:
+                break
+            prev_x = self.x
+
+        return False, steps
+
     def finds_target(self, target):
         prev_x = self.x
         steps = 0
@@ -39,9 +59,14 @@ class Probe:
         return False, steps
 
     def candidate_x_velocities(self, target):
-        for velocity in range(target.xmin, target.xmax):
-            expected_steps = 1
-            yield velocity, expected_steps
+        for target_x in range(target.xmin, target.xmax):
+            range_start = min(0, target_x + 1)
+            range_end = max(0, target_x + 1)
+            for velocity in range(range_start, range_end):
+                p = Probe(velocity_x=velocity)
+                hit, steps = p.finds_target_horizontally(target)
+                if hit:
+                    yield velocity, steps
 
     def candidate_y_velocities(self, target, expected_steps):
         if expected_steps == 1:
