@@ -12,6 +12,9 @@ class Probe:
         self.velocity_x += (1 if self.velocity_x < 0 else -1)
         self.velocity_y -= 1
 
+    def is_below(self, target):
+        return self.y < target.ymin
+
 
 class Target:
 
@@ -50,6 +53,12 @@ p = Probe(x=25, y=-7)
 t = Target("target area: x=20..30, y=-10..-5")
 
 assert t.contains(p)
+
+p = Probe(x=10, y=10)
+t = Target("target area: x=10..20, y=11..20")
+
+assert t.horizontally_contains(p)
+assert p.is_below(t)
 
 # Program
 content = open("17.txt").read().strip()
