@@ -11,13 +11,6 @@ digit_segment_counts = {
     9: 6,
 }
 
-unique_digit_wirings = {
-    1: set("cf"),
-    4: set("bcdf"),
-    7: set("acf"),
-    8: set("abcdefg"),
-}
-
 def candidate_digits(input):
     return set([
         digit for digit, count in digit_segment_counts.items() 
