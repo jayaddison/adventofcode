@@ -1,10 +1,3 @@
-def triangle(n):
-    result = n
-    while n:
-        n -= 1
-        result += n
-    return result
-
 class Probe:
 
     def __init__(self, x=0, y=0, velocity_x=0, velocity_y=0):
@@ -91,9 +84,6 @@ t = Target("target area: x=10..20, y=11..20")
 
 assert t.horizontally_contains(p)
 assert p.is_below(t)
-
-assert triangle(3) == 6
-assert triangle(6) == 21
 
 # Program
 content = open("17.txt").read().strip()
