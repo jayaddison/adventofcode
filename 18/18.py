@@ -18,6 +18,7 @@ class Snailfish:
             reducing = total.reduce(mode="explode")
             if reducing:
                 print(f"e: {total}")
+                continue
             reducing = total.reduce(mode="split") or reducing
             if reducing:
                 print(f"s: {total}")
@@ -75,23 +76,25 @@ class Snailfish:
                     previous_number_node.left += explode.left
                     carry_number = explode.right
 
-            if isinstance(current_node.right, Snailfish):
-                stack.append((current_node.right, depth + 1))
-            elif mode == "split" and not modified and current_node.right >= 10:
-                current_node.right = Snailfish(
-                    left=floor(current_node.right / 2),
-                    right=ceil(current_node.right / 2),
-                )
-                modified = True
-
-            if isinstance(current_node.left, Snailfish):
-                stack.append((current_node.left, depth + 1))
-            elif mode == "split" and not modified and current_node.left >= 10:
+            if mode == "split" and type(current_node.left) == int and current_node.left >= 10:
                 current_node.left = Snailfish(
                     left=floor(current_node.left / 2),
                     right=ceil(current_node.left / 2),
                 )
-                modified = True
+                return True
+
+            if mode == "split" and type(current_node.right) == int and current_node.right >= 10:
+                current_node.right = Snailfish(
+                    left=floor(current_node.right / 2),
+                    right=ceil(current_node.right / 2),
+                )
+                return True
+
+            if isinstance(current_node.right, Snailfish):
+                stack.append((current_node.right, depth + 1))
+
+            if isinstance(current_node.left, Snailfish):
+                stack.append((current_node.left, depth + 1))
 
             previous_node = current_node
 
