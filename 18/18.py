@@ -14,14 +14,10 @@ class Snailfish:
         total = Snailfish(left=self, right=value)
         reducing = True
         while reducing:
-            explode = total.reduce(mode="explode")
-            if explode:
-                print(f"e: {total}")
-                continue
-            split = total.reduce(mode="split")
+            reducing = total.reduce(mode="explode")
             if reducing:
-                print(f"s: {total}")
-            reducing = explode or split
+                continue
+            reducing = total.reduce(mode="split") or reducing
         return total
 
     def reduce(self, mode="explode"):
@@ -56,8 +52,6 @@ class Snailfish:
                 modified = explode is not None
 
                 if current_node.left == explode:
-                    print(f"p: {previous_number_node}")
-                    print(f"-> {current_node}")
                     current_node.left = 0
                     if isinstance(explode.left, Snailfish):
                         explode = explode.left
@@ -70,7 +64,6 @@ class Snailfish:
                         current_node.right.left += explode.right
                     else:
                         current_node.right += explode.right
-                    print(f"<- {current_node}")
 
                 elif current_node.right == explode:
                     current_node.right = 0
@@ -164,7 +157,13 @@ for test_input, expected_output in [
 # Test sums
 
 for test_lhs, test_rhs, expected_output in [
+    ("[[[[1,1],[2,2]],[3,3]],[4,4]]", "[5,5]", "[[[[3,0],[5,3]],[4,4]],[5,5]]"),
+    ("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]", "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]", "[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]"),
+    ("[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]", "[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]", "[[[[6,7],[6,7]],[[7,7],[0,7]]],[[[8,7],[7,7]],[[8,8],[8,0]]]]"),
+    ("[[[[6,7],[6,7]],[[7,7],[0,7]]],[[[8,7],[7,7]],[[8,8],[8,0]]]]", "[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]", "[[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]]"),
     ("[[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]]", "[7,[5,[[3,8],[1,4]]]]", "[[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]]"),
+    ("[[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]]", "[[2,[2,2]],[8,[8,1]]]", "[[[[6,6],[6,6]],[[6,0],[6,7]]],[[[7,7],[8,9]],[8,[8,1]]]]"),
+    ("[[[[6,6],[6,6]],[[6,0],[6,7]]],[[[7,7],[8,9]],[8,[8,1]]]]", "[2,9]", "[[[[6,6],[7,7]],[[0,7],[7,7]]],[[[5,5],[5,6]],9]]"),
 ]:
     test_sum = SnailfishParser(test_lhs).process() + SnailfishParser(test_rhs).process()
 
