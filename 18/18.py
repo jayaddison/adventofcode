@@ -46,7 +46,7 @@ class Snailfish:
 
                 if current_node.left == explode:
                     current_node.left = 0
-                    current_node.right = explode.left
+                    current_node.right += explode.right
 
                 elif current_node.right == explode:
                     current_node.right = 0
