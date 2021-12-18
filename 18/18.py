@@ -39,10 +39,6 @@ class Snailfish:
                 current_node.left += carry_number
                 carry_number = 0
 
-            if carry_number and not isinstance(current_node.right, Snailfish):
-                current_node.right += carry_number
-                carry_number = 0
-
             if depth == 4 and mode == "explode" and not modified:
                 explode = None
                 if isinstance(current_node.left, Snailfish):
@@ -67,9 +63,7 @@ class Snailfish:
 
                 elif current_node.right == explode:
                     current_node.right = 0
-                    if isinstance(explode.left, Snailfish):
-                        explode = explode.left
-                    previous_number_node.left += explode.left
+                    current_node.left += explode.left
                     carry_number = explode.right
 
             if mode == "split" and type(current_node.left) == int and current_node.left >= 10:
