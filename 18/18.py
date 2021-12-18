@@ -53,9 +53,7 @@ class SnailfishParser(NodeVisitor):
         return visited_children
 
     def process(self):
-        result = self.visit(self.tree)
-        print(result)
-        return Snailfish(left=1, right=1)
+        return self.visit(self.tree)
 
 
 content = open("18.txt").read().strip()
