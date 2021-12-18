@@ -1,3 +1,5 @@
+from math import ceil, floor
+
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
@@ -10,7 +12,9 @@ class Snailfish:
 
     def __add__(self, value):
         total = Snailfish(left=self, right=value)
-        total.reduce()
+        reducing = True
+        while reducing := total.reduce():
+            pass
         return total
 
     def reduce(self):
@@ -59,6 +63,8 @@ class Snailfish:
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
             carry_number = 0
+
+        return modified
 
     def __str__(self):
         return f"[{self.left},{self.right}]"
