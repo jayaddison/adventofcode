@@ -46,11 +46,14 @@ class Snailfish:
 
                 if current_node.left == explode:
                     current_node.left = 0
+                    if previous_number_node:
+                        previous_number_node.left += explode.left
                     current_node.right += explode.right
 
                 elif current_node.right == explode:
                     current_node.right = 0
-                    previous_number_node.left += explode.left
+                    if previous_number_node:
+                        previous_number_node.left += explode.left
                     carry_number = explode.right
 
             if isinstance(current_node.right, Snailfish):
