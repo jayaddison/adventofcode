@@ -13,11 +13,11 @@ class Snailfish:
     def __add__(self, value):
         total = Snailfish(left=self, right=value)
         reducing = True
-        while reducing := total.reduce():
+        while total.reduce(mode="explode") or total.reduce(mode="split"):
             pass
         return total
 
-    def reduce(self):
+    def reduce(self, mode="explode"):
         stack = [(self, 1)]
         current_node = None
         previous_node = None
@@ -67,7 +67,7 @@ class Snailfish:
 
             if isinstance(current_node.right, Snailfish):
                 stack.append((current_node.right, depth + 1))
-            elif not modified and current_node.right >= 10:
+            elif mode == "split" and not modified and current_node.right >= 10:
                 current_node.right = Snailfish(
                     left=floor(current_node.right / 2),
                     right=ceil(current_node.right / 2),
@@ -76,7 +76,7 @@ class Snailfish:
 
             if isinstance(current_node.left, Snailfish):
                 stack.append((current_node.left, depth + 1))
-            elif not modified and current_node.left >= 10:
+            elif mode == "split" and not modified and current_node.left >= 10:
                 current_node.left = Snailfish(
                     left=floor(current_node.left / 2),
                     right=ceil(current_node.left / 2),
