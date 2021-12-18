@@ -36,6 +36,10 @@ class Snailfish:
                 current_node.left += carry_number
                 carry_number = 0
 
+            if carry_number and not isinstance(current_node.right, Snailfish):
+                current_node.right += carry_number
+                carry_number = 0
+
             if depth == 4 and not modified:
                 explode = None
                 if isinstance(current_node.left, Snailfish):
@@ -47,13 +51,18 @@ class Snailfish:
                 if current_node.left == explode:
                     current_node.left = 0
                     if previous_number_node:
-                        previous_number_node.left += explode.left
-                    current_node.right += explode.right
+                        if not isinstance(previous_number_node.right, Snailfish):
+                            previous_number_node.right += explode.left
+                        elif not isinstance(previous_number_node.left, Snailfish):
+                            previous_number_node.left += explode.left
+                    if isinstance(current_node.right, Snailfish):
+                        current_node.right.left += explode.right
+                    else:
+                        current_node.right += explode.right
 
                 elif current_node.right == explode:
                     current_node.right = 0
-                    if previous_number_node:
-                        previous_number_node.left += explode.left
+                    previous_number_node.left += explode.left
                     carry_number = explode.right
 
             if isinstance(current_node.right, Snailfish):
@@ -122,7 +131,7 @@ class SnailfishParser(NodeVisitor):
         return self.visit(self.tree)
 
 
-# Test cases
+# Test parsing
 for test_input, expected_output in [
     ("[[[[[9,8],1],2],3],4]", "[[[[0,9],2],3],4]"),
     ("[7,[6,[5,[4,[3,2]]]]]", "[7,[6,[5,[7,0]]]]"),
@@ -140,6 +149,21 @@ for test_input, expected_output in [
     print()
 
     assert str(test_snailfish) == expected_output
+
+# Test sums
+
+for test_lhs, test_rhs, expected_output in [
+    ("[[[[1,1],[2,2]],[3,3]],[4,4]]", "[5,5]", "[[[[3,0],[5,3]],[4,4]],[5,5]]"),
+    ("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]", "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]", "[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]"),
+]:
+    test_sum = SnailfishParser(test_lhs).process() + SnailfishParser(test_rhs).process()
+
+    print(f"in: {test_lhs} + {test_rhs}")
+    print(f"ac: {test_sum}")
+    print(f"ex: {expected_output}")
+    print()
+
+    assert str(test_sum) == expected_output
 
 content = open("18.txt").read().strip()
 
