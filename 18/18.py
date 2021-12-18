@@ -49,21 +49,20 @@ class Snailfish:
 
                 if current_node.left == explode:
                     current_node.left = 0
-                    if isinstance(explode.left, Snailfish):
-                        explode = explode.left
+                    if type(current_node.right) == int:
+                        current_node.right += explode.right
+                    else:
+                        current_node.right.left += explode.right
+
                     if previous_number_node:
                         if not isinstance(previous_number_node.right, Snailfish):
                             previous_number_node.right += explode.left
                         elif not isinstance(previous_number_node.left, Snailfish):
                             previous_number_node.left += explode.left
-                    if isinstance(current_node.right, Snailfish):
-                        current_node.right.left += explode.right
-                    else:
-                        current_node.right += explode.right
 
                 elif current_node.right == explode:
-                    current_node.right = 0
                     current_node.left += explode.left
+                    current_node.right = 0
                     carry_number = explode.right
 
             if mode == "split" and type(current_node.left) == int and current_node.left >= 10:
