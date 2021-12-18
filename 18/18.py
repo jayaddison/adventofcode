@@ -174,11 +174,13 @@ for test_lhs, test_rhs, expected_output in [
     print(str(test_sum) == expected_output)
     print()
 
-content = open("18.txt").read().strip()
 
-total = None
-for line in content.split("\n"):
-    parser = SnailfishParser(line)
-    value = parser.process()
-    total = value if total is None else total + value
-print(total)
+if False:
+	content = open("18.txt").read().strip()
+
+	total = None
+	for line in content.split("\n"):
+	    parser = SnailfishParser(line)
+	    value = parser.process()
+	    total = value if total is None else total + value
+	print(total)
