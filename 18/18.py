@@ -13,15 +13,11 @@ class Snailfish:
     def __add__(self, value):
         total = Snailfish(left=self, right=value)
         reducing = True
-        print(f"b: {total}")
         while reducing:
             reducing = total.reduce(mode="explode")
             if reducing:
-                print(f"e: {total}")
                 continue
             reducing = total.reduce(mode="split") or reducing
-            if reducing:
-                print(f"s: {total}")
         return total
 
     def reduce(self, mode="explode"):
