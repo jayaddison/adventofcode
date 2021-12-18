@@ -13,9 +13,14 @@ class Snailfish:
     def __add__(self, value):
         total = Snailfish(left=self, right=value)
         reducing = True
+        print(f"b: {total}")
         while reducing:
             reducing = total.reduce(mode="explode")
+            if reducing:
+                print(f"e: {total}")
             reducing = total.reduce(mode="split") or reducing
+            if reducing:
+                print(f"s: {total}")
         return total
 
     def reduce(self, mode="explode"):
@@ -41,7 +46,7 @@ class Snailfish:
                 current_node.right += carry_number
                 carry_number = 0
 
-            if depth == 4 and not modified:
+            if depth == 4 and mode == "explode" and not modified:
                 explode = None
                 if isinstance(current_node.left, Snailfish):
                     explode = current_node.left
@@ -51,6 +56,8 @@ class Snailfish:
 
                 if current_node.left == explode:
                     current_node.left = 0
+                    if isinstance(explode.left, Snailfish):
+                        explode = explode.left
                     if previous_number_node:
                         if not isinstance(previous_number_node.right, Snailfish):
                             previous_number_node.right += explode.left
@@ -63,6 +70,8 @@ class Snailfish:
 
                 elif current_node.right == explode:
                     current_node.right = 0
+                    if isinstance(explode.left, Snailfish):
+                        explode = explode.left
                     previous_number_node.left += explode.left
                     carry_number = explode.right
 
