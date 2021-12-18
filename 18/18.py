@@ -167,11 +167,11 @@ for test_lhs, test_rhs, expected_output in [
 ]:
     test_sum = SnailfishParser(test_lhs).process() + SnailfishParser(test_rhs).process()
 
-    print(f"in: {test_lhs} + {test_rhs}")
-    print(f"ac: {test_sum}")
-    print(f"ex: {expected_output}")
-    print(str(test_sum) == expected_output)
-    print()
+    if (str(test_sum) != expected_output):
+        print(f"in: {test_lhs + test_rhs}")
+        print(f"ex: {expected_output}")
+        print(f"ac: {test_sum}")
+        print()
 
 
 if False:
