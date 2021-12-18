@@ -13,8 +13,9 @@ class Snailfish:
     def __add__(self, value):
         total = Snailfish(left=self, right=value)
         reducing = True
-        while total.reduce(mode="explode") or total.reduce(mode="split"):
-            pass
+        while reducing:
+            reducing = total.reduce(mode="explode")
+            reducing = total.reduce(mode="split") or reducing
         return total
 
     def reduce(self, mode="explode"):
