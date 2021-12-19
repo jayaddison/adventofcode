@@ -5,18 +5,20 @@ from parsimonious.nodes import NodeVisitor
 
 
 class Snailfish:
-
-    def __init__(self, left, right):
+    def __init__(self, left=None, right=None, value=None):
         self.left = left
         self.right = right
+        self.value = value
+        self.prev = None
+        self.next = None
 
     def __add__(self, value):
         return Snailfish(left=self, right=value).reduce()
 
     def __len__(self):
-        left_value = self.left if type(self.left) == int else len(self.left)
-        right_value = self.right if type(self.right) == int else len(self.right)
-        return left_value * 3 + right_value * 2
+        if self.is_number_node:
+            return self.value
+        return len(self.left) * 3 + len(self.right) * 2
 
     def reduce(self):
         while True:
@@ -37,100 +39,61 @@ class Snailfish:
             if isinstance(current_node.left, Snailfish):
                 stack.append((current_node.left, depth + 1))
 
-    def add_leftmost(self, value):
-        if type(self.left) == int:
-            self.left += value
-            return
-        self.left.add_leftmost(value)
+    @property
+    def is_number_node(self):
+        return self.value is not None
 
-    def add_rightmost(self, value, except_node=None):
-        if self == except_node:
-            return
-        if type(self.right) == int:
-            self.right += value
-            return
-        self.right.add_rightmost(value, except_node)
+    def link_nodes(self):
+        prev_number_node = None
+        for node, _ in self._walk_tree():
+            if not node.is_number_node:
+                continue
+            if prev_number_node:
+                prev_number_node.next = node
+            node.prev = prev_number_node
+            prev_number_node = node
 
     def explode(self):
-        previous_number_node = None
-        carry_number = 0
-
+        self.link_nodes()
         for current_node, depth in self._walk_tree():
-            if not isinstance(current_node.left, Snailfish):
-                previous_number_node = current_node
-
             if depth == 4:
-                child_nodes = [current_node.left, current_node.right]
-                nested_nodes = [node for node in child_nodes if isinstance(node, Snailfish)]
+                nested_nodes = [
+                    node
+                    for node in [current_node.left, current_node.right]
+                    if node and not node.is_number_node
+                ]
                 if not nested_nodes:
                     continue
 
                 leftmost_nested = nested_nodes[0]
+                assert leftmost_nested.left.is_number_node
+                assert leftmost_nested.right.is_number_node
+
+                left, right = leftmost_nested.left, leftmost_nested.right
+                if left.prev is not None:
+                    left.prev.value += left.value
+                if right.next is not None:
+                    right.next.value += right.value
+
                 if current_node.left == leftmost_nested:
-                    current_node.left = 0
-                    if type(current_node.right) == int:
-                        current_node.right += leftmost_nested.right
-                    else:
-                        current_node.right.left += leftmost_nested.right
-
-                    if previous_number_node:
-                        if type(previous_number_node.right) == int:
-                            previous_number_node.right += leftmost_nested.left
-                        else:
-                            previous_number_node.left += leftmost_nested.left
-                    return True
-
+                    current_node.left = Snailfish(value=0)
                 elif current_node.right == leftmost_nested:
-                    current_node.left += leftmost_nested.left
-                    current_node.right = 0
-                    carry_number = leftmost_nested.right
-                    break
-
-        if carry_number:
-            last_processed = current_node
-            except_node = current_node
-            for current_node, depth in self._walk_tree():
-                if current_node.left == last_processed:
-                    if type(current_node.right) == int:
-                        current_node.right += carry_number
-                        return True
-                    current_node.right.add_leftmost(carry_number)
-                    return True
-                if last_processed and current_node != last_processed:
-                    continue
-                if last_processed and current_node == last_processed:
-                    last_processed = None
-                    continue
-                current_node.add_leftmost(carry_number)
+                    current_node.right = Snailfish(value=0)
                 return True
-
-            self.add_rightmost(carry_number, except_node=except_node)
-            return True
 
         return False
 
     def split(self):
-
         for current_node, _ in self._walk_tree():
-
-            if type(current_node.left) == int and current_node.left >= 10:
-                current_node.left = Snailfish(
-                    left=floor(current_node.left / 2),
-                    right=ceil(current_node.left / 2),
-                )
+            if current_node.is_number_node and current_node.value >= 10:
+                current_node.left = Snailfish(value=floor(current_node.value / 2))
+                current_node.right = Snailfish(value=ceil(current_node.value / 2))
+                current_node.value = None
                 return True
-
-            if type(current_node.right) == int and current_node.right >= 10:
-                current_node.right = Snailfish(
-                    left=floor(current_node.right / 2),
-                    right=ceil(current_node.right / 2),
-                )
-                return True
-
         return False
 
     def __str__(self):
-        return f"[{self.left},{self.right}]"
+        return str(self.value) if self.is_number_node else f"[{self.left},{self.right}]"
 
 
 class SnailfishParser(NodeVisitor):
@@ -157,10 +120,10 @@ class SnailfishParser(NodeVisitor):
 
     def visit_snailfish(self, node, visited_children):
         _, left, _, right, _ = visited_children
-        return Snailfish(left[0], right[0])
+        return Snailfish(left=left[0], right=right[0])
 
     def visit_number(self, node, visited_children):
-        return int(node.text)
+        return Snailfish(value=int(node.text))
 
     def generic_visit(self, node, visited_children):
         return visited_children
