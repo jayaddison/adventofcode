@@ -85,12 +85,9 @@ class KnowledgeBase:
             )
             return None, None
 
-        axis_mappings = permutations([0, 1, 2])  # (x, y, z) -> (x, y, z), (x, z, y), ...
-        axis_multipliers = product([-1, 1], repeat=3)
-
         result = None, None
-        for axis_mapping in axis_mappings:
-            for axis_multiplication in axis_multipliers:
+        for axis_mapping in permutations([0, 1, 2]):  # (x, y, z) -> (x, y, z), (x, z, y), ...
+            for axis_multiplication in product([-1, 1], repeat=3):
                 sample_concurrence = concurrences[0]
                 sample_offsets = self.transformed_offsets(
                     sample_concurrence, axis_mapping, axis_multiplication
