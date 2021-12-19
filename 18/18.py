@@ -68,7 +68,7 @@ class Snailfish:
                     if previous_number_node:
                         if type(previous_number_node.right) == int:
                             previous_number_node.right += leftmost_nested.left
-                        elif type(previous_number_node.left) == int:
+                        else:
                             previous_number_node.left += leftmost_nested.left
                     return True
 
