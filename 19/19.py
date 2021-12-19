@@ -48,12 +48,8 @@ class Scanner:
 class KnowledgeBase:
 
     def __init__(self, scanner):
-        # beacon -> fingerprint mapping
-        self.known_beacons = {}
-
         print(f"Building initial knowledgebase from {scanner}")
-        for beacon in scanner.beacons:
-            self.known_beacons[beacon] = beacon.fingerprint()
+        self.known_beacons = {beacon: beacon.fingerprint() for beacon in scanner.beacons}
 
         # Set the criteria by which concurrences are determined
         self.match_level = max(len(fingerprint) for fingerprint in self.known_beacons.values())
