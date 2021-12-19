@@ -23,7 +23,6 @@ class Snailfish:
     def reduce(self, mode="explode"):
         stack = [(self, 1)]
         current_node = None
-        previous_node = None
 
         modified = False
         previous_number_node = None
@@ -84,8 +83,6 @@ class Snailfish:
 
             if isinstance(current_node.left, Snailfish):
                 stack.append((current_node.left, depth + 1))
-
-            previous_node = current_node
 
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
