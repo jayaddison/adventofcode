@@ -55,13 +55,8 @@ class KnowledgeBase:
 
         concurrences = []
         for beacon in scanner.beacons:
-            fingerprint = beacon.fingerprint()
-            if len(fingerprint) < self.match_level:
-                continue
             for known_beacon, known_fingerprint in self.known_beacons.items():
-                if known_fingerprint == fingerprint:
-                    concurrences.append((known_beacon, beacon))
-                    break
+                concurrences.append((known_beacon, beacon))
 
         print(f"Found {len(concurrences)} beacons with concurrent fingerprints")
         if len(concurrences) > 12:
@@ -70,10 +65,12 @@ class KnowledgeBase:
 
     def transformed_offsets(self, concurrence, axis_mapping, axis_multiplication):
         source_beacon, target_beacon = concurrence
-        (target_beacon[0], target_beacon[1], target_beacon[2]) = (
-            target_beacon[axis_mappings[0]] * axis_multiplication[0],
-            target_beacon[axis_mappings[1]] * axis_multiplication[1],
-            target_beacon[axis_mappings[2]] * axis_multiplication[2],
+        source_beacon = (source_beacon.x, source_beacon.y, source_beacon.z)
+        target_beacon = (target_beacon.x, target_beacon.y, target_beacon.z)
+        target_beacon = (
+            target_beacon[axis_mapping[0]] * axis_multiplication[0],
+            target_beacon[axis_mapping[1]] * axis_multiplication[1],
+            target_beacon[axis_mapping[2]] * axis_multiplication[2],
         )
         return (
             source_beacon[0] - target_beacon[0],
@@ -89,17 +86,24 @@ class KnowledgeBase:
             return None, None
 
         axis_mappings = permutations([0, 1, 2])  # (x, y, z) -> (x, y, z), (x, z, y), ...
-        axis_multipliers = combinations_with_replacement([-1, 1], 3)
+        axis_multipliers = [x for x in combinations_with_replacement([-1, 1], 3)]
 
         result = None, None
         for axis_mapping in axis_mappings:
             for axis_multiplication in axis_multipliers:
                 sample_concurrence = concurrences[0]
-                sample_offsets = transformed_offsets(
+                sample_offsets = self.transformed_offsets(
                     sample_concurrence, axis_mapping, axis_multiplication
                 )
+
+                print(sample_offsets)
+                print([x for x in
+                    [self.transformed_offsets(concurrence, axis_mapping, axis_multiplication)
+                    for concurrence in concurrences[1:]]
+                ])
+
                 if all(
-                    transformed_offsets(concurrence, axis_mapping, axis_multiplication)
+                    self.transformed_offsets(concurrence, axis_mapping, axis_multiplication)
                     == sample_offsets
                     for concurrence in concurrences[1:]
                 ):
@@ -110,7 +114,7 @@ class KnowledgeBase:
         return result
 
 
-orientations = open("different-orientations.txt").read()
+orientations = open("19.txt").read()
 blocks = orientations.split("\n\n")
 scanners = set()
 for block in blocks:
