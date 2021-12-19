@@ -188,12 +188,13 @@ for test_input, expected_output in [
 
 
 
-if False:
-	content = open("18.txt").read().strip()
+content = open("18.txt").read().strip()
 
-	total = None
-	for line in content.split("\n"):
-	    parser = SnailfishParser(line)
-	    value = parser.process()
-	    total = value if total is None else total + value
-	print(total)
+total = None
+for line in content.split("\n"):
+    parser = SnailfishParser(line)
+    value = parser.process()
+    total = value if total is None else total + value
+
+print(total)
+print(len(total))
