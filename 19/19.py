@@ -2,21 +2,15 @@ from itertools import permutations, product
 from math import pow, sqrt
 
 
-class Beacon:
-    def __init__(self, coordinates):
-        x, y, z = coordinates.split(",")
-        self.x = int(x)
-        self.y = int(y)
-        self.z = int(z)
-
-    def __str__(self):
-        return f"{self.x},{self.y},{self.z}"
+def parse_beacon(coordinates):
+    x, y, z = coordinates.split(",")
+    return (int(x), int(y), int(z))
 
 
 class Scanner:
     def __init__(self, name, beacons):
         self.name = name
-        self.beacons = [Beacon(beacon) for beacon in beacons if beacon.strip()]
+        self.beacons = set([parse_beacon(coordinates) for coordinates in beacons if coordinates.strip()])
 
     def __str__(self):
         return self.name
@@ -24,17 +18,17 @@ class Scanner:
 
 class KnowledgeBase:
     def __init__(self, scanner):
-        print(f"Building initial knowledgebase from {scanner}")
         self.beacons = scanner.beacons
 
-    def offset(self, source, target, axis_mapping, axis_multiplication):
-        source = (source.x, source.y, source.z)
-        target = (target.x, target.y, target.z)
-        target = (
+    def transform(self, target, axis_mapping, axis_multiplication):
+        return (
             target[axis_mapping[0]] * axis_multiplication[0],
             target[axis_mapping[1]] * axis_multiplication[1],
             target[axis_mapping[2]] * axis_multiplication[2],
         )
+
+    def offset(self, source, target, axis_mapping, axis_multiplication):
+        target = self.transform(target, axis_mapping, axis_multiplication)
         return (
             source[0] - target[0],
             source[1] - target[1],
@@ -63,10 +57,13 @@ class KnowledgeBase:
                             ) == keystone_offset
                             for (source, target) in product(comparison_sources, comparison_targets)
                         )
-                        if matches >= 12:
+                        if matches >= 3:
                             print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multiplication} keystone {keystone_offset}")
                             return axis_mapping, axis_multiplication
         return None, None
+
+    def import_beacons(self, beacons, axis_mapping, axis_multipliers):
+        pass
 
 
 orientations = open("19.txt").read()
@@ -80,3 +77,4 @@ for block in blocks:
 knowledgebase = KnowledgeBase(scanners.pop())
 for scanner in scanners:
     axis_mapping, axis_multipliers = knowledgebase.determine_orientation(scanner)
+    knowledgebase.import_beacons(scanner.beacons, axis_mapping, axis_multipliers)
