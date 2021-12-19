@@ -107,10 +107,10 @@ class KnowledgeBase:
                     == sample_offsets
                     for concurrence in concurrences[1:]
                 ):
-                    print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multipliers}")
+                    print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multiplication}")
                     result = axis_mapping, axis_multiplication
                 else:
-                    print(f"Found INVALID axis mapping {axis_mapping} with multipliers {axis_multipliers}")
+                    print(f"Found INVALID axis mapping {axis_mapping} with multipliers {axis_multiplication}")
         return result
 
 
