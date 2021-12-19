@@ -21,8 +21,10 @@ class Snailfish:
     def reduce(self):
         while True:
             if self.explode():
+                print(f"e: {self}")
                 continue
             if self.split():
+                print(f"s: {self}")
                 continue
             break
         return self
