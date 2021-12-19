@@ -21,10 +21,8 @@ class Snailfish:
     def reduce(self):
         while True:
             if self.explode():
-                print(f"e: {self}")
                 continue
             if self.split():
-                print(f"s: {self}")
                 continue
             break
         return self
@@ -47,11 +45,7 @@ class Snailfish:
             if not isinstance(current_node.left, Snailfish):
                 previous_number_node = current_node
 
-            if carry_number and not isinstance(current_node.left, Snailfish):
-                current_node.left += carry_number
-                return True
-
-            if depth == 4 and not carry_number:
+            if depth == 4:
                 child_nodes = [current_node.left, current_node.right]
                 nested_nodes = [node for node in child_nodes if isinstance(node, Snailfish)]
                 if not nested_nodes:
@@ -76,6 +70,19 @@ class Snailfish:
                     current_node.left += leftmost_nested.left
                     current_node.right = 0
                     carry_number = leftmost_nested.right
+                    break
+
+        if carry_number:
+            last_processed = current_node
+            for current_node, depth in self._walk_tree():
+                if last_processed and current_node != last_processed:
+                    continue
+                if last_processed and current_node == last_processed:
+                    last_processed = None
+                    continue
+                if type(current_node.left) == int:
+                    current_node.left += carry_number
+                    return True
 
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
