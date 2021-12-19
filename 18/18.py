@@ -38,7 +38,6 @@ class Snailfish:
                 stack.append((current_node.left, depth + 1))
 
     def explode(self):
-        modified = False
         previous_number_node = None
         carry_number = 0
 
@@ -49,15 +48,14 @@ class Snailfish:
 
             if carry_number and not isinstance(current_node.left, Snailfish):
                 current_node.left += carry_number
-                carry_number = 0
+                return True
 
-            if depth == 4 and not modified:
+            if depth == 4 and not carry_number:
                 explode = None
                 if isinstance(current_node.left, Snailfish):
                     explode = current_node.left
                 elif isinstance(current_node.right, Snailfish):
                     explode = current_node.right
-                modified = explode is not None
 
                 if current_node.left == explode:
                     current_node.left = 0
@@ -71,6 +69,7 @@ class Snailfish:
                             previous_number_node.right += explode.left
                         elif not isinstance(previous_number_node.left, Snailfish):
                             previous_number_node.left += explode.left
+                    return True
 
                 elif current_node.right == explode:
                     current_node.left += explode.left
@@ -79,9 +78,9 @@ class Snailfish:
 
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
-            carry_number = 0
+            return True
 
-        return modified
+        return False
 
     def split(self):
 
