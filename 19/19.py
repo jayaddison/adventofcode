@@ -1,5 +1,5 @@
 import heapq
-from itertools import combinations_with_replacement, permutations
+from itertools import permutations, product
 from math import pow, sqrt
 
 
@@ -86,7 +86,7 @@ class KnowledgeBase:
             return None, None
 
         axis_mappings = permutations([0, 1, 2])  # (x, y, z) -> (x, y, z), (x, z, y), ...
-        axis_multipliers = [x for x in combinations_with_replacement([-1, 1], 3)]
+        axis_multipliers = product([-1, 1], repeat=3)
 
         result = None, None
         for axis_mapping in axis_mappings:
