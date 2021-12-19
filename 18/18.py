@@ -20,6 +20,11 @@ class Snailfish:
             reducing = total.reduce(mode="split") or reducing
         return total
 
+    def __len__(self):
+        left_value = self.left if type(self.left) == int else len(self.left)
+        right_value = self.right if type(self.right) == int else len(self.right)
+        return left_value * 3 + right_value * 2
+
     def reduce(self, mode="explode"):
         stack = [(self, 1)]
         current_node = None
@@ -162,6 +167,25 @@ for test_lhs, test_rhs, expected_output in [
         print(f"ex: {expected_output}")
         print(f"ac: {test_sum}")
         print()
+
+# Test magnitudes
+
+for test_input, expected_output in [
+    ("[[1,2],[[3,4],5]]", 143),
+    ("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", 1384),
+    ("[[[[1,1],[2,2]],[3,3]],[4,4]]", 445),
+    ("[[[[3,0],[5,3]],[4,4]],[5,5]]", 791),
+    ("[[[[5,0],[7,4]],[5,5]],[6,6]]", 1137),
+    ("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]", 3488),
+]:
+    test_magnitude = len(SnailfishParser(test_input).process())
+
+    if (test_magnitude != expected_output):
+        print(f"in: {test_input}")
+        print(f"ex: {expected_output}")
+        print(f"ac: {test_magnitude}")
+        print()
+
 
 
 if False:
