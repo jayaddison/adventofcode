@@ -93,12 +93,6 @@ class KnowledgeBase:
                     sample_concurrence, axis_mapping, axis_multiplication
                 )
 
-                print(sample_offsets)
-                print([x for x in
-                    [self.transformed_offsets(concurrence, axis_mapping, axis_multiplication)
-                    for concurrence in concurrences[1:]]
-                ])
-
                 if all(
                     self.transformed_offsets(concurrence, axis_mapping, axis_multiplication)
                     == sample_offsets
