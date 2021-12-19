@@ -57,7 +57,6 @@ class KnowledgeBase:
     def find_concurrences(self, scanner):
         print(f"Checking for {scanner} concurrences at match level {self.match_level}")
 
-        match_count = 0
         concurrences = []
         for beacon in scanner.beacons:
             fingerprint = beacon.fingerprint()
