@@ -1,11 +1,9 @@
-from collections import defaultdict
 import heapq
-from itertools import permutations
+from itertools import combinations_with_replacement, permutations
 from math import pow, sqrt
 
 
 class Beacon:
-
     def __init__(self, coordinates):
         x, y, z = coordinates.split(",")
         self.x = int(x)
@@ -34,7 +32,6 @@ class Beacon:
 
 
 class Scanner:
-
     def __init__(self, name, beacons):
         self.name = name
         self.beacons = [Beacon(beacon) for beacon in beacons if beacon.strip()]
@@ -46,7 +43,6 @@ class Scanner:
 
 
 class KnowledgeBase:
-
     def __init__(self, scanner):
         print(f"Building initial knowledgebase from {scanner}")
         self.known_beacons = {beacon: beacon.fingerprint() for beacon in scanner.beacons}
@@ -68,19 +64,61 @@ class KnowledgeBase:
                     break
 
         print(f"Found {len(concurrences)} beacons with concurrent fingerprints")
+        if len(concurrences) > 12:
+            return concurrences[:12]
+        return []
+
+    def transformed_offsets(self, concurrence, axis_mapping, axis_multiplication):
+        source_beacon, target_beacon = concurrence
+        (target_beacon[0], target_beacon[1], target_beacon[2]) = (
+            target_beacon[axis_mappings[0]] * axis_multiplication[0],
+            target_beacon[axis_mappings[1]] * axis_multiplication[1],
+            target_beacon[axis_mappings[2]] * axis_multiplication[2],
+        )
+        return (
+            source_beacon[0] - target_beacon[0],
+            source_beacon[1] - target_beacon[1],
+            source_beacon[2] - target_beacon[2],
+        )
+
+    def determine_orientation(self, concurrences):
+        if len(concurrences) < 12:
+            print(
+                f"Not supplied enough concurrences to determine orientation; 12 are required and {len(concurrences)} were provided"
+            )
+            return None, None
+
+        axis_mappings = permutations([0, 1, 2])  # (x, y, z) -> (x, y, z), (x, z, y), ...
+        axis_multipliers = combinations_with_replacement([-1, 1], 3)
+
+        result = None, None
+        for axis_mapping in axis_mappings:
+            for axis_multiplication in axis_multipliers:
+                sample_concurrence = concurrences[0]
+                sample_offsets = transformed_offsets(
+                    sample_concurrence, axis_mapping, axis_multiplication
+                )
+                if all(
+                    transformed_offsets(concurrence, axis_mapping, axis_multiplication)
+                    == sample_offsets
+                    for concurrence in concurrences[1:]
+                ):
+                    print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multipliers}")
+                    result = axis_mapping, axis_multiplication
+                else:
+                    print(f"Found INVALID axis mapping {axis_mapping} with multipliers {axis_multipliers}")
+        return result
 
 
-test_orientations = open("different-orientations.txt").read()
-test_blocks = test_orientations.split("\n\n")
-test_scanners = set()
-for test_block in test_blocks:
-    test_readout = test_block.split("\n")
-    test_name, test_beacons = test_readout[0], test_readout[1:]
-    test_scanners.add(Scanner(test_name, test_beacons))
+orientations = open("different-orientations.txt").read()
+blocks = orientations.split("\n\n")
+scanners = set()
+for block in blocks:
+    readout = block.split("\n")
+    name, beacons = readout[0], readout[1:]
+    scanners.add(Scanner(name, beacons))
 
-test_knowledgebase = None
-for test_scanner in test_scanners:
-    if test_knowledgebase is None:
-        test_knowledgebase = KnowledgeBase(test_scanner)
-    else:
-        test_knowledgebase.find_concurrences(test_scanner)
+knowledgebase = KnowledgeBase(scanners.pop())
+for scanner in scanners:
+    concurrences = knowledgebase.find_concurrences(scanner)
+    axis_mapping, axis_multipliers = knowledgebase.determine_orientation(concurrences)
