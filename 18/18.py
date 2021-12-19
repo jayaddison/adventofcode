@@ -11,30 +11,38 @@ class Snailfish:
         self.right = right
 
     def __add__(self, value):
-        total = Snailfish(left=self, right=value)
-        reducing = True
-        while reducing:
-            reducing = total.reduce(mode="explode")
-            if reducing:
-                continue
-            reducing = total.reduce(mode="split") or reducing
-        return total
+        return Snailfish(left=self, right=value).reduce()
 
     def __len__(self):
         left_value = self.left if type(self.left) == int else len(self.left)
         right_value = self.right if type(self.right) == int else len(self.right)
         return left_value * 3 + right_value * 2
 
-    def reduce(self, mode="explode"):
-        stack = [(self, 1)]
-        current_node = None
+    def reduce(self):
+        while True:
+            if self.explode():
+                continue
+            if self.split():
+                continue
+            break
+        return self
 
+    def _walk_tree(self):
+        stack = [(self, 1)]
+        while stack:
+            current_node, depth = stack.pop()
+            yield current_node, depth
+            if isinstance(current_node.right, Snailfish):
+                stack.append((current_node.right, depth + 1))
+            if isinstance(current_node.left, Snailfish):
+                stack.append((current_node.left, depth + 1))
+
+    def explode(self):
         modified = False
         previous_number_node = None
         carry_number = 0
 
-        while stack:
-            current_node, depth = stack.pop()
+        for current_node, depth in self._walk_tree():
 
             if not isinstance(current_node.left, Snailfish):
                 previous_number_node = current_node
@@ -43,7 +51,7 @@ class Snailfish:
                 current_node.left += carry_number
                 carry_number = 0
 
-            if depth == 4 and mode == "explode" and not modified:
+            if depth == 4 and not modified:
                 explode = None
                 if isinstance(current_node.left, Snailfish):
                     explode = current_node.left
@@ -69,31 +77,31 @@ class Snailfish:
                     current_node.right = 0
                     carry_number = explode.right
 
-            if mode == "split" and type(current_node.left) == int and current_node.left >= 10:
+        if carry_number and not isinstance(self.right, Snailfish):
+            self.right += carry_number
+            carry_number = 0
+
+        return modified
+
+    def split(self):
+
+        for current_node, _ in self._walk_tree():
+
+            if type(current_node.left) == int and current_node.left >= 10:
                 current_node.left = Snailfish(
                     left=floor(current_node.left / 2),
                     right=ceil(current_node.left / 2),
                 )
                 return True
 
-            if mode == "split" and type(current_node.right) == int and current_node.right >= 10:
+            if type(current_node.right) == int and current_node.right >= 10:
                 current_node.right = Snailfish(
                     left=floor(current_node.right / 2),
                     right=ceil(current_node.right / 2),
                 )
                 return True
 
-            if isinstance(current_node.right, Snailfish):
-                stack.append((current_node.right, depth + 1))
-
-            if isinstance(current_node.left, Snailfish):
-                stack.append((current_node.left, depth + 1))
-
-        if carry_number and not isinstance(self.right, Snailfish):
-            self.right += carry_number
-            carry_number = 0
-
-        return modified
+        return False
 
     def __str__(self):
         return f"[{self.left},{self.right}]"
@@ -145,9 +153,13 @@ for test_input, expected_output in [
     ("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]", "[[[[0,7],4],[7,[[8,4],9]]],[1,1]]"),
 ]:
     test_snailfish = SnailfishParser(test_input).process()
-    test_snailfish.reduce()
+    test_snailfish.explode()
 
-    assert str(test_snailfish) == expected_output
+    if (str(test_snailfish) != expected_output):
+        print(f"parse in: {test_input}")
+        print(f"parse ex: {expected_output}")
+        print(f"parse ac: {test_snailfish}")
+        print()
 
 # Test sums
 
@@ -163,9 +175,9 @@ for test_lhs, test_rhs, expected_output in [
     test_sum = SnailfishParser(test_lhs).process() + SnailfishParser(test_rhs).process()
 
     if (str(test_sum) != expected_output):
-        print(f"in: {test_lhs + test_rhs}")
-        print(f"ex: {expected_output}")
-        print(f"ac: {test_sum}")
+        print(f"sum in: {test_lhs + test_rhs}")
+        print(f"sum ex: {expected_output}")
+        print(f"sum ac: {test_sum}")
         print()
 
 # Test magnitudes
@@ -181,20 +193,7 @@ for test_input, expected_output in [
     test_magnitude = len(SnailfishParser(test_input).process())
 
     if (test_magnitude != expected_output):
-        print(f"in: {test_input}")
-        print(f"ex: {expected_output}")
-        print(f"ac: {test_magnitude}")
+        print(f"mag in: {test_input}")
+        print(f"mag ex: {expected_output}")
+        print(f"mag ac: {test_magnitude}")
         print()
-
-
-
-content = open("18.txt").read().strip()
-
-total = None
-for line in content.split("\n"):
-    parser = SnailfishParser(line)
-    value = parser.process()
-    total = value if total is None else total + value
-
-print(total)
-print(len(total))
