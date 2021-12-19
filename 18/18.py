@@ -42,7 +42,6 @@ class Snailfish:
         carry_number = 0
 
         for current_node, depth in self._walk_tree():
-
             if not isinstance(current_node.left, Snailfish):
                 previous_number_node = current_node
 
@@ -51,30 +50,30 @@ class Snailfish:
                 return True
 
             if depth == 4 and not carry_number:
-                explode = None
-                if isinstance(current_node.left, Snailfish):
-                    explode = current_node.left
-                elif isinstance(current_node.right, Snailfish):
-                    explode = current_node.right
+                child_nodes = [current_node.left, current_node.right]
+                nested_nodes = [node for node in child_nodes if isinstance(node, Snailfish)]
+                if not nested_nodes:
+                    continue
 
-                if current_node.left == explode:
+                leftmost_nested = nested_nodes[0]
+                if current_node.left == leftmost_nested:
                     current_node.left = 0
                     if type(current_node.right) == int:
-                        current_node.right += explode.right
+                        current_node.right += leftmost_nested.right
                     else:
-                        current_node.right.left += explode.right
+                        current_node.right.left += leftmost_nested.right
 
                     if previous_number_node:
-                        if not isinstance(previous_number_node.right, Snailfish):
-                            previous_number_node.right += explode.left
-                        elif not isinstance(previous_number_node.left, Snailfish):
-                            previous_number_node.left += explode.left
+                        if type(previous_number_node.right) == int:
+                            previous_number_node.right += leftmost_nested.left
+                        elif type(previous_number_node.left) == int:
+                            previous_number_node.left += leftmost_nested.left
                     return True
 
-                elif current_node.right == explode:
-                    current_node.left += explode.left
+                elif current_node.right == leftmost_nested:
+                    current_node.left += leftmost_nested.left
                     current_node.right = 0
-                    carry_number = explode.right
+                    carry_number = leftmost_nested.right
 
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
