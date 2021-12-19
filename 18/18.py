@@ -37,6 +37,12 @@ class Snailfish:
             if isinstance(current_node.left, Snailfish):
                 stack.append((current_node.left, depth + 1))
 
+    def add_leftmost(self, value):
+        if type(self.left) == int:
+            self.left += value
+            return
+        self.left.add_leftmost(value)
+
     def explode(self):
         previous_number_node = None
         carry_number = 0
@@ -75,14 +81,19 @@ class Snailfish:
         if carry_number:
             last_processed = current_node
             for current_node, depth in self._walk_tree():
+                if current_node.left == last_processed:
+                    if type(current_node.right) == int:
+                        current_node.right += carry_number
+                        return True
+                    current_node.right.add_leftmost(carry_number)
+                    return True
                 if last_processed and current_node != last_processed:
                     continue
                 if last_processed and current_node == last_processed:
                     last_processed = None
                     continue
-                if type(current_node.left) == int:
-                    current_node.left += carry_number
-                    return True
+                current_node.add_leftmost(carry_number)
+                return True
 
         if carry_number and not isinstance(self.right, Snailfish):
             self.right += carry_number
