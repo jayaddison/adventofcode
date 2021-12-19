@@ -37,6 +37,18 @@ class Snailfish:
             if isinstance(current_node.left, Snailfish):
                 stack.append((current_node.left, depth + 1))
 
+    def _increment_rightmost(self, value, limit):
+        if self.right == limit:
+            if type(self.left) == int:
+                self.left += value
+            else:
+                self.left._increment_rightmost(value, limit)
+        else:
+            if type(self.right) == int:
+                self.right += value
+            else:
+                self.right._increment_rightmost(value, limit)
+
     def explode(self):
         previous_number_node = None
         carry_number = 0
@@ -64,10 +76,8 @@ class Snailfish:
                         current_node.right.left += leftmost_nested.right
 
                     if previous_number_node:
-                        if type(previous_number_node.right) == int:
-                            previous_number_node.right += leftmost_nested.left
-                        elif type(previous_number_node.left) == int:
-                            previous_number_node.left += leftmost_nested.left
+                        previous_number_node._increment_rightmost(leftmost_nested.left, limit=current_node)
+
                     return True
 
                 elif current_node.right == leftmost_nested:
