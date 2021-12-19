@@ -43,6 +43,14 @@ class Snailfish:
             return
         self.left.add_leftmost(value)
 
+    def add_rightmost(self, value, except_node=None):
+        if self == except_node:
+            return
+        if type(self.right) == int:
+            self.right += value
+            return
+        self.right.add_rightmost(value, except_node)
+
     def explode(self):
         previous_number_node = None
         carry_number = 0
@@ -80,6 +88,7 @@ class Snailfish:
 
         if carry_number:
             last_processed = current_node
+            except_node = current_node
             for current_node, depth in self._walk_tree():
                 if current_node.left == last_processed:
                     if type(current_node.right) == int:
@@ -95,8 +104,7 @@ class Snailfish:
                 current_node.add_leftmost(carry_number)
                 return True
 
-        if carry_number and not isinstance(self.right, Snailfish):
-            self.right += carry_number
+            self.add_rightmost(carry_number, except_node=except_node)
             return True
 
         return False
