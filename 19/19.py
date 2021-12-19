@@ -59,11 +59,19 @@ class KnowledgeBase:
                         )
                         if matches >= 3:
                             print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multiplication} keystone {keystone_offset}")
-                            return axis_mapping, axis_multiplication
+                            return axis_mapping, axis_multiplication, keystone_offset
         return None, None
 
-    def import_beacons(self, beacons, axis_mapping, axis_multipliers):
-        pass
+    def import_beacons(self, beacons, axis_mapping, axis_multipliers, keystone_offset):
+        for beacon in beacons:
+            beacon = self.offset(beacon, keystone_offset, axis_mapping, axis_multipliers)
+            beacon = (
+                beacon[0] + keystone_offset[0],
+                beacon[1] + keystone_offset[1],
+                beacon[2] + keystone_offset[2],
+            )
+            self.beacons.add(beacon)
+        print(f"Known beacon count is now {len(self.beacons)}")
 
 
 orientations = open("19.txt").read()
@@ -76,5 +84,5 @@ for block in blocks:
 
 knowledgebase = KnowledgeBase(scanners.pop())
 for scanner in scanners:
-    axis_mapping, axis_multipliers = knowledgebase.determine_orientation(scanner)
-    knowledgebase.import_beacons(scanner.beacons, axis_mapping, axis_multipliers)
+    axis_mapping, axis_multipliers, keystone_offset = knowledgebase.determine_orientation(scanner)
+    knowledgebase.import_beacons(scanner.beacons, axis_mapping, axis_multipliers, keystone_offset)
