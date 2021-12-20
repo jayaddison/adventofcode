@@ -17,8 +17,8 @@ class Scanner:
 
 
 class KnowledgeBase:
-    def __init__(self, scanner):
-        self.beacons = scanner.beacons
+    def __init__(self):
+        self.beacons = set()
 
     def transform(self, target, axis_mapping, axis_multiplication):
         return (
@@ -57,32 +57,44 @@ class KnowledgeBase:
                             ) == keystone_offset
                             for (source, target) in product(comparison_sources, comparison_targets)
                         )
-                        if matches >= 3:
-                            print(f"Determined VALID axis_mapping {axis_mapping} with multipliers {axis_multiplication} keystone {keystone_offset}")
+                        if matches >= 11:
+                            print(f"Determined {matches} VALID axis_mapping {axis_mapping} with multipliers {axis_multiplication} keystone {keystone_offset}")
                             return axis_mapping, axis_multiplication, keystone_offset
-        return None, None
+        return None, None, None
 
-    def import_beacons(self, beacons, axis_mapping, axis_multipliers, keystone_offset):
+    def import_beacons(self, beacons, axis_mapping=None, axis_multipliers=None, keystone_offset=None):
         for beacon in beacons:
-            beacon = self.offset(beacon, keystone_offset, axis_mapping, axis_multipliers)
-            beacon = (
-                beacon[0] + keystone_offset[0],
-                beacon[1] + keystone_offset[1],
-                beacon[2] + keystone_offset[2],
-            )
+            if axis_mapping and axis_multipliers and keystone_offset:
+                beacon = self.transform(beacon, axis_mapping, axis_multipliers)
+                beacon = (
+                    beacon[0] + keystone_offset[0],
+                    beacon[1] + keystone_offset[1],
+                    beacon[2] + keystone_offset[2],
+                )
             self.beacons.add(beacon)
         print(f"Known beacon count is now {len(self.beacons)}")
 
 
 orientations = open("19.txt").read()
 blocks = orientations.split("\n\n")
-scanners = set()
+scanners = []
 for block in blocks:
     readout = block.split("\n")
     name, beacons = readout[0], readout[1:]
-    scanners.add(Scanner(name, beacons))
+    scanners.append(Scanner(name, beacons))
 
-knowledgebase = KnowledgeBase(scanners.pop())
-for scanner in scanners:
+scanner_zero = scanners.pop(0)
+
+knowledgebase = KnowledgeBase()
+knowledgebase.import_beacons(scanner_zero.beacons)
+
+while scanners:
+    scanner = scanners.pop(0)
+    print(f"Processing {scanner}")
+
     axis_mapping, axis_multipliers, keystone_offset = knowledgebase.determine_orientation(scanner)
+    if not axis_mapping:
+        print(f"Could not find orientation for {scanner}; returning it to the list to try again later")
+        scanners.append(scanner)
+        continue
     knowledgebase.import_beacons(scanner.beacons, axis_mapping, axis_multipliers, keystone_offset)
