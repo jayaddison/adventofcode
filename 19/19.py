@@ -1,5 +1,4 @@
 from itertools import permutations, product
-from math import pow, sqrt
 
 
 def parse_beacon(coordinates):
