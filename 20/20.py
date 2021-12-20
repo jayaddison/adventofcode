@@ -12,31 +12,38 @@ for line in input_image_text.split("\n"):
     input_image.append(row)
 
 
-def pixel_neighbour_bitstring(source, x, y):
+def pixel_neighbour_bitstring(source, state_of_void, x, y):
     bitstring = []
     for row in [y - 1, y, y + 1]:
         for col in [x - 1, x, x + 1]:
             try:
                 bit = "1" if source[row][col] else "0"
             except:
-                bit = "0"
+                bit = "1" if state_of_void else "0"
             bitstring.append(bit)
     return str().join(bitstring)
 
 
-def transform_pixel(source, x, y, algorithm):
-    index_bitstring = pixel_neighbour_bitstring(source, x, y)
+def update_void_state(state_of_void, algorithm):
+    index_bitstring = str().join(["1" if state_of_void else "0"] * 9)
     index = int(index_bitstring, 2)
     return algorithm[index]
 
 
-def render(source):
+def transform_pixel(source, state_of_void, x, y, algorithm):
+    index_bitstring = pixel_neighbour_bitstring(source, state_of_void, x, y)
+    index = int(index_bitstring, 2)
+    return algorithm[index]
+
+
+def render(source, state_of_void):
     width = len(source[0])
     height = len(source)
     for y in range(height):
         for x in range(width):
             print("#" if source[y][x] else ".", end="")
         print()
+    print(f"{width}x{height} : the void is '{'#' if state_of_void else '.'}'")
     print(count_light_pixels(source))
     print()
 
@@ -63,34 +70,36 @@ def has_light_border(source):
     return False
 
 
-def expand(source):
+def expand(source, state_of_void):
     width = len(source[0])
     height = len(source)
 
     result = []
-    result.append([False] * (width + 2))
+    result.append([state_of_void] * (width + 2))
     for y in range(height):
-        result.append([False] + source[y] + [False])
-    result.append([False] * (width + 2))
+        result.append([state_of_void] + source[y] + [state_of_void])
+    result.append([state_of_void] * (width + 2))
     return result
 
 
-def apply_algorithm(source, algorithm):
+def apply_algorithm(source, state_of_void, algorithm):
     destination = empty_canvas(source)
     width = len(destination[0])
     height = len(destination)
     for x in range(width):
         for y in range(height):
-            destination[y][x] |= transform_pixel(source, x, y, algorithm)
-    return destination
+            destination[y][x] = transform_pixel(source, state_of_void, x, y, algorithm)
+    state_of_void = update_void_state(state_of_void, algorithm)
+    return destination, state_of_void
 
 
 def apply_algorithm_repeatedly(source, algorithm, steps=1):
+    state_of_void = False
     for _ in range(steps):
         if has_light_border(source):
-            source = expand(source)
-        source = apply_algorithm(source, algorithm)
-        render(source)
+            source = expand(source, state_of_void)
+        source, state_of_void = apply_algorithm(source, state_of_void, algorithm)
+        render(source, state_of_void)
     return source
 
 
