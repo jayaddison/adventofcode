@@ -73,7 +73,7 @@ def explore_paths(players, path):
             if winner:
                 break
         if winner:
-            games_won[player] += path_to_occurrences(evaluation_path)
+            games_won[player.name] += path_to_occurrences(evaluation_path)
         else:
             explore_paths(players, evaluation_path)
 
