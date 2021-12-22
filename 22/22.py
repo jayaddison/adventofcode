@@ -1,41 +1,48 @@
+def extent_size(extent):
+    xbounds, ybounds, zbounds = extent
+    return (
+        (xbounds[1] - xbounds[0])
+        * (ybounds[1] - ybounds[0])
+        * (zbounds[1] - zbounds[0])
+    )
+
+
+def constrain(input, bounds):
+    result = []
+    for index, _ in enumerate(input):
+        result.append(
+            (
+                max(input[index][0], bounds[index][0]),
+                min(input[index][1], bounds[index][1]),
+            )
+        )
+    return tuple(result)
+
+
+assert constrain(input=((-5, 5),), bounds=((-1, 10),)) == ((-1, 5),)
+
+
 class Cube:
+    def __init__(self, xbounds, ybounds, zbounds, value):
+        self.xbounds = xbounds
+        self.ybounds = ybounds
+        self.zbounds = zbounds
+        self.value = value
 
-    def __init__(self):
-        self.xbounds = (-50, 50 + 1)
-        self.ybounds = (-50, 50 + 1)
-        self.zbounds = (-50, 50 + 1)
-        self.cube = []
-        for z in range(*self.zbounds):
-            grid = []
-            for y in range(*self.ybounds):
-                row = []
-                for x in range(*self.xbounds):
-                    row.append(False)
-                grid.append(row)
-            self.cube.append(grid)
+    def size(self):
+        return extent_size((self.xbounds, self.ybounds, self.zbounds))
 
-    def __len__(self):
-        total = 0
-        for z in range(*self.zbounds):
-            for y in range(*self.ybounds):
-                total += sum(self.cube[z][y])
-        return total
+    def __str__(self):
+        return f"({self.xbounds},{self.ybounds},{self.zbounds}) = {self.size()}"
 
-    def apply_operation(self, instruction, xrange, yrange, zrange):
-        xrange[0] = max(xrange[0], self.xbounds[0])
-        xrange[1] = min(xrange[1], self.xbounds[1])
-        yrange[0] = max(yrange[0], self.ybounds[0])
-        yrange[1] = min(yrange[1], self.ybounds[1])
-        zrange[0] = max(zrange[0], self.zbounds[0])
-        zrange[1] = min(zrange[1], self.zbounds[1])
+    def intersection(self, cube):
+        bounds = constrain(
+            (cube.xbounds, cube.ybounds, cube.zbounds),
+            (self.xbounds, self.ybounds, self.zbounds),
+        )
+        xintersect, yintersect, zintersect = bounds
+        return Cube(xintersect, yintersect, zintersect, cube.value)
 
-        for z in range(*zrange):
-            for y in range(*yrange):
-                for x in range(*xrange):
-                    try:
-                        self.cube[z][y][x] = instruction
-                    except:
-                        pass
 
 def parse_range_string(text, expected_prefix):
     assert text.startswith(expected_prefix)
@@ -59,7 +66,17 @@ for line in content.split("\n"):
     zrange = parse_range_string(zrange_string, "z=")
     operations.append((instruction, xrange, yrange, zrange))
 
-cube = Cube()
-for operation in operations:
-    cube.apply_operation(*operation)
-print(len(cube))
+
+cubes = []
+net_results = []
+for instruction, xrange, yrange, zrange in operations:
+    operation_cube = Cube(xrange, yrange, zrange, instruction)
+    net_result = operation_cube.size() * (1 if instruction else -1)
+    for cube in cubes:
+        intersection = cube.intersection(operation_cube)
+    net_results.append(net_result)
+    cubes.append(operation_cube)
+
+
+print([str(cube) for cube in cubes])
+print(net_results)
