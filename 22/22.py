@@ -12,8 +12,8 @@ def constrain(input, bounds):
     for index, _ in enumerate(input):
         result.append(
             (
-                max(input[index][0], bounds[index][0]),
-                min(input[index][1], bounds[index][1]),
+                min(max(input[index][0], bounds[index][0]), bounds[index][1]),
+                min(max(input[index][1], bounds[index][0]), bounds[index][1]),
             )
         )
     return tuple(result)
