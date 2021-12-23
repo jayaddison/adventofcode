@@ -28,6 +28,7 @@ class Cube:
         self.ybounds = ybounds
         self.zbounds = zbounds
         self.value = value
+        self.subtractions = []
 
     def size(self):
         return extent_size((self.xbounds, self.ybounds, self.zbounds))
@@ -42,6 +43,16 @@ class Cube:
         )
         xintersect, yintersect, zintersect = bounds
         return Cube(xintersect, yintersect, zintersect, cube.value)
+
+    def subtract(self, cube):
+        intersection = self.intersection(cube)
+        if not intersection.size():
+            return 0
+        subtracted = 0
+        for subtraction in self.subtractions:
+            subtracted += subtraction.subtract(intersection)
+        self.subtractions.append(intersection)
+        return intersection.size() - subtracted
 
 
 def parse_range_string(text, expected_prefix):
@@ -68,15 +79,22 @@ for line in content.split("\n"):
 
 
 cubes = []
-net_results = []
+total = 0
 for instruction, xrange, yrange, zrange in operations:
     operation_cube = Cube(xrange, yrange, zrange, instruction)
-    net_result = operation_cube.size() * (1 if instruction else -1)
+    print(f"processing {operation_cube}")
+    if instruction:
+        added = operation_cube.size()
+        print(f"{total} += {added}")
+        total += added
+
     for cube in cubes:
-        intersection = cube.intersection(operation_cube)
-    net_results.append(net_result)
+        subtracted = cube.subtract(operation_cube)
+        print(f"total -= {subtracted}")
+        total -= subtracted
+
+    print(f"done")
     cubes.append(operation_cube)
 
-
 print([str(cube) for cube in cubes])
-print(net_results)
+print(total)
