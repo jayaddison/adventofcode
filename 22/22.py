@@ -81,9 +81,11 @@ for line in content.split("\n"):
 
 
 cubes = []
+measurement_area = Cube((-50, 51), (-50, 51), (-50, 51))
 total = 0
 for instruction, xrange, yrange, zrange in operations:
     operation_cube = Cube(xrange, yrange, zrange)
+    operation_cube = measurement_area.intersection(operation_cube)
     print(f"processing {operation_cube}")
     if instruction:
         added = operation_cube.size()
