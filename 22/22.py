@@ -82,19 +82,15 @@ cubes = []
 total = 0
 for instruction, xrange, yrange, zrange in operations:
     operation_cube = Cube(xrange, yrange, zrange, instruction)
-    print(f"processing {operation_cube}")
     if instruction:
         added = operation_cube.size()
-        print(f"{total} += {added}")
         total += added
 
     for cube in cubes:
         subtracted = cube.subtract(operation_cube)
-        print(f"total -= {subtracted}")
         total -= subtracted
 
-    print(f"done")
-    cubes.append(operation_cube)
+    if instruction:
+        cubes.append(operation_cube)
 
-print([str(cube) for cube in cubes])
 print(total)
