@@ -23,12 +23,14 @@ assert constrain(input=((-5, 5),), bounds=((-1, 10),)) == ((-1, 5),)
 
 
 class Cube:
-    def __init__(self, xbounds, ybounds, zbounds, value):
+    def __init__(self, xbounds, ybounds, zbounds):
         self.xbounds = xbounds
         self.ybounds = ybounds
         self.zbounds = zbounds
-        self.value = value
         self.subtractions = []
+
+    def size(self):
+        return extent_size((self.xbounds, self.ybounds, self.zbounds))
 
     def size(self):
         return extent_size((self.xbounds, self.ybounds, self.zbounds))
@@ -42,7 +44,7 @@ class Cube:
             (self.xbounds, self.ybounds, self.zbounds),
         )
         xintersect, yintersect, zintersect = bounds
-        return Cube(xintersect, yintersect, zintersect, cube.value)
+        return Cube(xintersect, yintersect, zintersect)
 
     def subtract(self, cube):
         intersection = self.intersection(cube)
@@ -81,7 +83,8 @@ for line in content.split("\n"):
 cubes = []
 total = 0
 for instruction, xrange, yrange, zrange in operations:
-    operation_cube = Cube(xrange, yrange, zrange, instruction)
+    operation_cube = Cube(xrange, yrange, zrange)
+    print(f"processing {operation_cube}")
     if instruction:
         added = operation_cube.size()
         total += added
