@@ -1,0 +1,1 @@
+Solution credit: https://github.com/kemmel-dev/AdventOfCode2021/blob/b1282339af7309d3f72a42a88f6a6c1abb8f6d61/day24/AoC%20Day%2024.pdf
