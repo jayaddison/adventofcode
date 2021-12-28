@@ -131,7 +131,6 @@ for input in generate_inputs():
         if not instruction:
             continue
         alu.process(instruction)
-        prev_alu = str(alu)
         z = alu.variables["z"]
     if min_z is None or z < min_z:
         min_z = z
