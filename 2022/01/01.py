@@ -10,5 +10,7 @@ for line in content:
         continue
     calories[elf] += int(line)
 
-for _, max_calories in calories.most_common(1):
-    print(max_calories)
+total_calories = 0
+for _, calories in calories.most_common(3):
+    total_calories += calories
+print(total_calories)
