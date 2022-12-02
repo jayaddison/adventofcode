@@ -17,7 +17,7 @@ SHAPE_SCORES = {
 
 
 def score(a, b):
-    shape = SHAPES[a]
+    a, b = SHAPES[a], SHAPES[b]
     if a == 'rock' and b == 'scissors':
         outcome = 6
     elif a == 'paper' and b == 'rock':
@@ -28,7 +28,7 @@ def score(a, b):
         outcome = 3
     else:
         outcome = 0
-    return SHAPE_SCORES[shape] + outcome
+    return SHAPE_SCORES[a] + outcome
 
 
 total_score = 0
