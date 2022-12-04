@@ -7,12 +7,15 @@ def score(letter):
        return ord(letter) - ord('a') + 1
 
 total_score = 0
-for line in content.splitlines():
-    halfway = int(len(line) / 2)
-    first, second = line[:halfway], line[halfway:]
-    common = (set(first) & set(second)).pop()
+lines = iter(content.splitlines())
+while True:
+    elf1, elf2, elf3 = next(lines, None), next(lines, None), next(lines, None)
+    if elf1 is None:
+        break
+
+    common = (set(elf1) & set(elf2) & set(elf3)).pop()
     total_score += score(common)
 print(total_score)
 
-assert score('p') == 16
-assert score('P') == 42
+assert score('r') == 18
+assert score('Z') == 52
