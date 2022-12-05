@@ -18,8 +18,11 @@ def parse_stacks(supplies):
     return stacks
 
 def move(from_stack, to_stack, item_count):
+    items = []
     for _ in range(item_count):
-        to_stack.append(from_stack.pop())
+        items.append(from_stack.pop())
+    for _ in range(item_count):
+        to_stack.append(items.pop())
 
 stacks = parse_stacks(supplies)
 for line in operations.splitlines():
