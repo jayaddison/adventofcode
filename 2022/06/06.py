@@ -2,7 +2,7 @@ from collections import defaultdict
 
 content = open("06.txt").read()
 
-WINDOW_SIZE = 4
+WINDOW_SIZE = 14
 
 for line in content.splitlines():
     window = list(line[:WINDOW_SIZE])
