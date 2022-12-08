@@ -52,6 +52,18 @@ SIZE_LIMIT = 100_000
 total_size = 0
 for directory, size in directory_sizes.items():
     total_size += size if size <= SIZE_LIMIT else 0
-print(total_size)
 
+SIZE_INSTALLED = 70_000_000
+SIZE_REQUIRED = 30_000_000
+SIZE_ALLOCATED = directory_sizes["/"]
+
+smallest_candidate = ("/", SIZE_ALLOCATED)
+for directory, size in directory_sizes.items():
+    if SIZE_ALLOCATED - size <= SIZE_REQUIRED:
+        _, smallest_size = smallest_candidate
+        if size < smallest_size:
+            smallest_candidate = directory, size
+print(smallest_candidate)
+
+print(smallest_candidate)
 assert list(component_paths("/abc/def/")) == ["/abc/def/", "/abc/", "/"]
