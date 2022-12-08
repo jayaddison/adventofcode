@@ -65,5 +65,4 @@ for directory, size in directory_sizes.items():
             smallest_candidate = directory, size
 print(smallest_candidate)
 
-print(smallest_candidate)
 assert list(component_paths("/abc/def/")) == ["/abc/def/", "/abc/", "/"]
