@@ -11,7 +11,7 @@ def parse_command(cwd, cmd):
            cwd = cwd
         case "cd", "..":
            cmd = "cd"
-           cwd = "/" + "/".join(cwd.split("/")[1:-2])
+           cwd = "/" + "/".join(cwd.split("/")[1:-2]) + "/"
         case "cd", "/":
            cmd = "cd"
            cwd = "/"
