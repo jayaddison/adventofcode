@@ -59,7 +59,7 @@ SIZE_ALLOCATED = directory_sizes["/"]
 
 smallest_candidate = ("/", SIZE_ALLOCATED)
 for directory, size in directory_sizes.items():
-    if SIZE_ALLOCATED - size <= SIZE_REQUIRED:
+    if SIZE_ALLOCATED - size <= SIZE_INSTALLED - SIZE_REQUIRED:
         _, smallest_size = smallest_candidate
         if size < smallest_size:
             smallest_candidate = directory, size
