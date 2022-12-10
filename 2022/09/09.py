@@ -17,8 +17,12 @@ def update_tail():
     horizontal_distance = abs(head_x - tail_x)
     vertical_distance = abs(head_y - tail_y)
     if horizontal_distance > 1 or vertical_distance > 1:
-        tail_x += (head_x - tail_x) / 2
-        tail_y += (head_y - tail_y) / 2
+        dist_x = (head_x - tail_x)
+        dist_y = (head_y - tail_y)
+        if dist_x:
+            tail_x += dist_x / abs(dist_x)
+        if dist_y:
+            tail_y += dist_y / abs(dist_y)
         tail_position = tail_x, tail_y
 
 for line in content.splitlines():
