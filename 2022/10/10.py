@@ -16,9 +16,12 @@ relevant_cycles = {20, 60, 100, 140, 180, 220}
 
 
 cycle = 0
-total = 0
+scan = -1
+line = -1
 while instructions or pending_operations:
     cycle += 1
+    scan = (scan + 1) % 40
+    line = (line + 1) % 6 if scan == 0 else (line)
 
     operations = pending_operations[cycle]
     for operation in operations:
@@ -27,10 +30,10 @@ while instructions or pending_operations:
                 REGISTERS["X"] += int(v)
     del pending_operations[cycle]
 
-    if cycle in relevant_cycles:
-        signal_strength = cycle * REGISTERS['X']
-        total += signal_strength
-        print(f"{cycle}: {signal_strength}") 
+    if scan == 0:
+        print()
+    lit = abs(REGISTERS["X"] - scan) <= 1
+    print('#' if lit else '.', end='')
 
     if pending_operations:
         continue
@@ -39,5 +42,4 @@ while instructions or pending_operations:
     match instruction.split():
         case "addx", _:
             pending_operations[cycle + 2].append(instruction)
-
-print(total)
+print()
