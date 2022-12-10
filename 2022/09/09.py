@@ -1,22 +1,20 @@
 content = open("09.txt").read()
 
 
-head_position = (0, 0)
-tail_position = (0, 0)
+positions = {n: (0, 0) for n in range(10)}
 
 tail_visited = set()
-tail_visited.add(tail_position)
+tail_visited.add(positions[9])
 
 def move_head(x_step, y_step):
-    global head_position
-    x, y = head_position
-    head_position = (x + x_step, y + y_step)
+    global positions
+    x, y = positions[0]
+    positions[0] = (x + x_step, y + y_step)
 
-def update_tail():
-    global head_position
-    global tail_position
-    head_x, head_y = head_position
-    tail_x, tail_y = tail_position
+def update_pair(head, tail):
+    global positions
+    head_x, head_y = positions[head]
+    tail_x, tail_y = positions[tail]
     horizontal_distance = abs(head_x - tail_x)
     vertical_distance = abs(head_y - tail_y)
     if horizontal_distance > 1 or vertical_distance > 1:
@@ -27,7 +25,9 @@ def update_tail():
         if dist_y:
             tail_y += dist_y / abs(dist_y)
         tail_position = tail_x, tail_y
-        tail_visited.add(tail_position)
+        if tail == 9:
+            tail_visited.add(tail_position)
+        positions[tail] = tail_position
 
 for line in content.splitlines():
     match line.split():
@@ -42,15 +42,7 @@ for line in content.splitlines():
 
     for _ in range(int(count)):
         move_head(x_step, y_step)
-        update_tail()
-        
-        for j in range(0, 10):
-            for i in range(0, 10):
-                sign = "."
-                sign = "T" if tail_position == (i, j) else sign
-                sign = "H" if head_position == (i, j) else sign
-                print(sign , end="")
-            print()
-        print()
+        for n in range(1, 10):
+            update_pair(n - 1, n)
 
 print(len(tail_visited))
