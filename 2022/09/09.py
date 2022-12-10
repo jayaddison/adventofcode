@@ -4,6 +4,9 @@ content = open("09.txt").read()
 head_position = (0, 0)
 tail_position = (0, 0)
 
+tail_visited = set()
+tail_visited.add(tail_position)
+
 def move_head(x_step, y_step):
     global head_position
     x, y = head_position
@@ -24,6 +27,7 @@ def update_tail():
         if dist_y:
             tail_y += dist_y / abs(dist_y)
         tail_position = tail_x, tail_y
+        tail_visited.add(tail_position)
 
 for line in content.splitlines():
     match line.split():
@@ -48,3 +52,5 @@ for line in content.splitlines():
                 print(sign , end="")
             print()
         print()
+
+print(len(tail_visited))
