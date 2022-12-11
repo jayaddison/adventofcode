@@ -8,6 +8,10 @@ class Monkey:
         self.items = items
         self.operation = operation
         self.test = test
+        match test.split():
+            case "divisible", "by", value:
+                self.test_operation = "divide"
+                self.test_operand = int(value)
         self.destinations = {True: destination_true, False: destination_false}
 
     def __str__(self):
@@ -30,9 +34,8 @@ class Monkey:
 
         # test result of operation
         result = None
-        match self.test.split():
-            case "divisible", "by", value:
-                result = item % int(value) == 0
+        if self.test_operation == "divide":
+            result = item % self.test_operand == 0
 
         # append (throw) item to monkey at relevant destination
         monkeys[self.destinations[result]].items.append(item)
