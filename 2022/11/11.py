@@ -22,6 +22,7 @@ class Monkey:
         return bool(self.items)
 
     def inspect_item(self):
+        global prime_multiple
         item = self.items.pop(0)
 
         # apply operation to worry level
@@ -38,7 +39,7 @@ class Monkey:
             result = item % self.test_operand == 0
 
         # append (throw) item to monkey at relevant destination
-        monkeys[self.destinations[result]].items.append(item)
+        monkeys[self.destinations[result]].items.append(item % prime_multiple)
 
 
 def parse_segment(segment):
@@ -57,6 +58,11 @@ while segment := content[:7]:
     monkey_id, monkey = parse_segment(segment)
     monkeys[monkey_id] = monkey
     content = content[7:]
+
+prime_multiple = 1
+for monkey in monkeys.values():
+    if monkey.test_operation == "divide":
+        prime_multiple *= monkey.test_operand
 
 
 monkey_activity = Counter()
