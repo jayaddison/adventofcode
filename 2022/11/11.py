@@ -28,9 +28,6 @@ class Monkey:
             case "+", value:
                 item += parse_value(value)
 
-        # then, worry_level = int(worry_level / 3)
-        item = int(item / 3)
-
         # test result of operation
         result = None
         match self.test.split():
@@ -60,7 +57,7 @@ while segment := content[:7]:
 
 
 monkey_activity = Counter()
-for cycle in range(20):
+for cycle in range(10000):
     for monkey_id, monkey in monkeys.items():
         while monkey.holding_items:
             monkey.inspect_item()
