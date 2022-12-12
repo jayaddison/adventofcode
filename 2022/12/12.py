@@ -31,7 +31,7 @@ class TileGrid(Grid):
         neighbours = super().neighbors(node, diagonal_movement)
         elevation = grid[node.y][node.x]
         for neighbour in neighbours:
-            if abs(grid[neighbour.y][neighbour.x] - elevation) <= 1:
+            if grid[neighbour.y][neighbour.x] <= elevation + 1:
                 yield neighbour
 
     def walkable(self, x, y):
