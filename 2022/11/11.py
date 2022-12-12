@@ -3,7 +3,7 @@ from collections import Counter
 content = open("11.txt").read().splitlines()
 
 
-class Monkey:
+class Department:
     def __init__(self, items, operation, test, destination_true, destination_false):
         self.items = items
         self.operation = operation
@@ -38,60 +38,60 @@ class Monkey:
         if self.test_operation == "divide":
             result = item % self.test_operand == 0
 
-        # append (throw) item to monkey at relevant destination
-        monkeys[self.destinations[result]].items.append(item % prime_multiple)
+        # append (throw) item to department at relevant destination
+        departments[self.destinations[result]].items.append(item % prime_multiple)
 
 
 def parse_segment(segment):
-    monkey_id, items, operation, test, destination_true, destination_false = segment[:6]
-    monkey_id = int(monkey_id[7:-1])
+    department_id, items, operation, test, destination_true, destination_false = segment[:6]
+    department_id = int(department_id[11:-1])
     items = [int(item) for item in items[18:].split(", ")]
     operation = operation[23:]
     test = test[8:]
-    destination_true = int(destination_true[29:])
-    destination_false = int(destination_false[30:])
-    return monkey_id, Monkey(items, operation, test, destination_true, destination_false)
+    destination_true = int(destination_true[33:])
+    destination_false = int(destination_false[34:])
+    return department_id, Department(items, operation, test, destination_true, destination_false)
 
 
-monkeys = {}
+departments = {}
 while segment := content[:7]:
-    monkey_id, monkey = parse_segment(segment)
-    monkeys[monkey_id] = monkey
+    department_id, department = parse_segment(segment)
+    departments[department_id] = department
     content = content[7:]
 
 prime_multiple = 1
-for monkey in monkeys.values():
-    if monkey.test_operation == "divide":
-        prime_multiple *= monkey.test_operand
+for department in departments.values():
+    if department.test_operation == "divide":
+        prime_multiple *= department.test_operand
 
 
-monkey_activity = Counter()
+department_activity = Counter()
 for cycle in range(10000):
-    for monkey_id, monkey in monkeys.items():
-        while monkey.holding_items:
-            monkey.inspect_item()
-            monkey_activity[monkey_id] += 1
+    for department_id, department in departments.items():
+        while department.holding_items:
+            department.inspect_item()
+            department_activity[department_id] += 1
 
-    for monkey in monkeys.values():
-        print(monkey)
+    for department in departments.values():
+        print(department)
     print()
 
-top_business_monkeys = monkey_activity.most_common(2)
-top_monkey, second_monkey = top_business_monkeys
-print(top_monkey[1] * second_monkey[1])
+top_business_departments = department_activity.most_common(2)
+top_department, second_department = top_business_departments
+print(top_department[1] * second_department[1])
 
 test_segment = (
-    "Monkey 0:\n"
+    "Department 0:\n"
     "  Starting items: 79, 98\n"
     "  Operation: new = old * 19\n"
     "  Test: divisible by 23\n"
-    "    If true: throw to monkey 2\n"
-    "    If false: throw to monkey 3"
+    "    If true: throw to department 2\n"
+    "    If false: throw to department 3"
 ).splitlines()
 
 parsed_segment = parse_segment(test_segment)
-monkey_id, monkey = parsed_segment
-assert (monkey_id, monkey.items, monkey.operation, monkey.test, monkey.destinations) == (
+department_id, department = parsed_segment
+assert (department_id, department.items, department.operation, department.test, department.destinations) == (
     0,
     [79, 98],
     "* 19",
