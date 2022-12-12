@@ -9,14 +9,10 @@ class Tile:
             if abs(step.elevation - self.elevation) <= 1
         ]
 
-    def explore(self, path, destination, known_path=None):
+    def explore(self, path, destination):
         # Base case: we've reached the destination; return the entire path
         if self == destination:
             return [list(path) + [self]]
-
-        # Avoid exploring paths that are longer than the best-found so far
-        if known_path and len(path) >= len(known_path):
-            return []
 
         # Avoid exploring the same tile repeatedly
         if self in path:
@@ -25,10 +21,9 @@ class Tile:
         # Recursive case: explore paths for neighbouring reachable tiles
         paths = []
         for tile in self.reachable_tiles:
-            for result in tile.explore(path=path | {self}, destination=destination, known_path=known_path):
+            for result in tile.explore(path=path | {self}, destination=destination):
                 if result:
                     paths.append(result)
-                    known_path = result
         return paths
 
 
@@ -70,7 +65,7 @@ for i in range(len(grid)):
 (start_y, start_x), (end_y, end_x) = start_position, end_position
 start, end = grid[start_y][start_x], grid[end_y][end_x]
 paths = start.explore(path=set(), destination=end)
-print([len(path) for path in paths])
+print(min([len(path) for path in paths]))
 
 
 assert (1, 5, [0, 0, 2, 3, 4, 25, 25]) == line_to_elevations("aScdeEz")
