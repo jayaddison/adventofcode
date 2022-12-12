@@ -28,9 +28,8 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 
 class TileGrid(Grid):
     def neighbors(self, node, diagonal_movement=DiagonalMovement.never):
-        neighbours = super().neighbors(node, diagonal_movement)
         elevation = grid[node.y][node.x]
-        for neighbour in neighbours:
+        for neighbour in super().neighbors(node, diagonal_movement):
             if grid[neighbour.y][neighbour.x] <= elevation + 1:
                 yield neighbour
 
