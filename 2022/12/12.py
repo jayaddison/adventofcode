@@ -10,16 +10,9 @@ class Tile:
         ]
 
     def explore(self, path, destination, known_path=None):
-        global tile_costs
-
         # Base case: we've reached the destination; return the entire path
         if self == destination:
             return [list(path) + [self]]
-
-        # If we've taken a longer path to reach this tile than during a previous
-        # attempt, then stop exploring this path
-        if self in tile_costs and tile_costs[self] < len(path):
-            return []
 
         # Avoid exploring paths that are longer than the best-found so far
         if known_path and len(path) >= len(known_path):
@@ -28,8 +21,6 @@ class Tile:
         # Avoid exploring the same tile repeatedly
         if self in path:
             return []
-
-        tile_costs[self] = len(path)
 
         # Recursive case: explore paths for neighbouring reachable tiles
         paths = []
@@ -76,7 +67,6 @@ for i in range(len(grid)):
 
 
 # Explore the graph
-tile_costs = dict()
 (start_y, start_x), (end_y, end_x) = start_position, end_position
 start, end = grid[start_y][start_x], grid[end_y][end_x]
 paths = start.explore(path=set(), destination=end)
