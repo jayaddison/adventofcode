@@ -48,9 +48,9 @@ print(len(path) - 1)
 # Extremely hacky map printout
 for i in range(len(grid)):
     for j in range(len(grid[i])):
-        if (j, i) == (start_x, start_x):
+        if (j, i) == (start_x, start_y):
             print('S', end='')
-        elif (j, i) == (end_y, end_x):
+        elif (j, i) == (end_x, end_y):
             print('E', end='')
         elif (j, i) in path:
             print('@', end='')
