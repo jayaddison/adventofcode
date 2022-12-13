@@ -45,4 +45,18 @@ print(path)
 print(len(path) - 1)
 
 
+# Extremely hacky map printout
+for i in range(len(grid)):
+    for j in range(len(grid[i])):
+        if (j, i) == (start_x, start_x):
+            print('S', end='')
+        elif (j, i) == (end_y, end_x):
+            print('E', end='')
+        elif (j, i) in path:
+            print('@', end='')
+        else:
+            print(str(grid[i][j])[0], end='')
+    print()
+
+
 assert (1, 5, [0, 0, 2, 3, 4, 25, 25]) == line_to_elevations("aScdeEz")
