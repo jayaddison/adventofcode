@@ -101,6 +101,22 @@ def compare(left, right):
             return compare(left, [right])
 
 
+content = open("13.txt").read().splitlines()
+lines = []
+pairing, total = 1, 0
+for line in content:
+    if line:
+        lines.append(line)
+    if len(lines) == 2:
+        left_line, right_line = lines
+        left = NestedIntegerListParser(left_line).process()
+        right = NestedIntegerListParser(right_line).process()
+        if compare(left, right) is True:
+            total += pairing
+        lines.clear()
+        pairing += 1
+
+
 assert compare(1, 2) == True  # left item is lower
 assert compare(2, 1) == False
 assert compare([1], [2]) == True  # lower integer first
