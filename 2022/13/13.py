@@ -85,9 +85,9 @@ def compare(left, right):
            while True:
                left_item = next(left, None)
                right_item = next(right, None)
-               if not right_item:
+               if right_item is None:
                    return True
-               if not left_item:
+               if left_item is None:
                    return False
                comparison = compare(left_item, right_item)
                if comparison is None:
