@@ -10,7 +10,7 @@ class NestedIntegerListParser(NodeVisitor):
 
         integer_list = open_bracket items close_bracket
 
-        items = item (comma items)?
+        items = item? (comma items)?
 
         item = integer_list
              / number
@@ -31,7 +31,7 @@ class NestedIntegerListParser(NodeVisitor):
 
     def visit_items(self, node, visited_children):
         head, tail = visited_children
-        yield head
+        yield from head
         for subexpr in tail:
             for items in subexpr:
                 yield from items
@@ -62,6 +62,7 @@ for test_input, expected_output in [
     ("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]", [[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]),
     ("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]", [[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]),
     ("[[[[14,13],[8,15]],[[12,5],[10,0]]],[[[11,[7,4]],7],1]]", [[[[14,13],[8,15]],[[12,5],[10,0]]],[[[11,[7,4]],7],1]]),
+    ("[]", []),
 ]:
     test_nested_integer_list = NestedIntegerListParser(test_input).process()
     assert test_nested_integer_list == expected_output
