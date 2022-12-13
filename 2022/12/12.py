@@ -36,13 +36,25 @@ class TileGrid(Grid):
     def walkable(self, x, y):
         return super().inside(x, y)
 
-tile_grid = TileGrid(matrix=grid)
-origin = tile_grid.node(start_x, start_y)
-destination = tile_grid.node(end_x, end_y)
-finder = BreadthFirstFinder(diagonal_movement=DiagonalMovement.never)
-path, _ = finder.find_path(origin, destination, tile_grid)
-print(path)
-print(len(path) - 1)
+origins = []
+for i in range(len(grid)):
+    for j in range(len(grid[i])):
+        if grid[i][j] == 0:  # potential starting location
+            origins.append((i, j))
+
+best_path = []
+for origin in origins:
+    start_y, start_x = origin
+    tile_grid = TileGrid(matrix=grid)
+    origin = tile_grid.node(start_x, start_y)
+    destination = tile_grid.node(end_x, end_y)
+    finder = BreadthFirstFinder(diagonal_movement=DiagonalMovement.never)
+    path, _ = finder.find_path(origin, destination, tile_grid)
+    if path:
+        if not best_path or len(path) < len(best_path):
+            best_path = path
+print(best_path)
+print(len(best_path) - 1)
 
 
 # Extremely hacky map printout
