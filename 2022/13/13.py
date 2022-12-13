@@ -72,7 +72,12 @@ def compare(left, right):
     match type(left).__name__, type(right).__name__:
 
         case 'int', 'int':
-           return left < right
+           if left < right:
+               return True
+           elif left > right:
+               return False
+           else:
+               return None
 
         case 'list', 'list':
            left = iter(left)
@@ -84,8 +89,10 @@ def compare(left, right):
                    return True
                if not left_item:
                    return False
-               if not compare(left_item, right_item):
-                   return False
+               comparison = compare(left_item, right_item)
+               if comparison is None:
+                   continue
+               return comparison
 
         case 'int', _:
             return compare([left], right)
