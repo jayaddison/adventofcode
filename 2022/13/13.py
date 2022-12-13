@@ -112,9 +112,11 @@ for line in content:
         left = NestedIntegerListParser(left_line).process()
         right = NestedIntegerListParser(right_line).process()
         if compare(left, right) is True:
+            print(pairing)
             total += pairing
         lines.clear()
         pairing += 1
+print(total)
 
 
 assert compare(1, 2) == True  # left item is lower
