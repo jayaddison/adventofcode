@@ -6,13 +6,14 @@ class NestedIntegerListParser(NodeVisitor):
 
     grammar = Grammar(
         """
-        integer_list = open_bracket left comma right close_bracket
+        nested_integer_list = integer_list
 
-        left = number
-             / integer_list
+        integer_list = open_bracket items close_bracket
 
-        right = number
-              / integer_list
+        items = item (comma items)?
+
+        item = integer_list
+             / number
 
         open_bracket = "["
         close_bracket = "]"
@@ -25,11 +26,25 @@ class NestedIntegerListParser(NodeVisitor):
         self.tree = self.grammar.parse(text)
 
     def visit_integer_list(self, node, visited_children):
-        _, left, _, right, _ = visited_children
-        return left + right
+        _, items, _ = visited_children
+        return list(items)
+
+    def visit_items(self, node, visited_children):
+        head, tail = visited_children
+        yield head
+        for subexpr in tail:
+            for items in subexpr:
+                yield from items
+
+    def visit_item(self, node, visited_children):
+        item, = visited_children
+        return item
 
     def visit_number(self, node, visited_children):
         return int(node.text)
+
+    def visit_comma(self, node, visited_children):
+        yield from ()
 
     def generic_visit(self, node, visited_children):
         return visited_children
@@ -40,7 +55,7 @@ class NestedIntegerListParser(NodeVisitor):
 
 # Test parsing
 for test_input, expected_output in [
-    ("[[[[[9,8],1],2],3],4]", [[[[[9,8],1],2],3],4]),
+    ("[[[[[9,8,3],1],2],3],4]", [[[[[9,8,3],1],2],3],4]),
     ("[7,[6,[5,[4,[3,2]]]]]", [7,[6,[5,[4,[3,2]]]]]),
     ("[[6,[5,[4,[3,2]]]],1]", [[6,[5,[4,[3,2]]]],1]),
     ("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]", [[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]),
