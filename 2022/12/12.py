@@ -42,7 +42,7 @@ destination = tile_grid.node(end_x, end_y)
 finder = BestFirst(diagonal_movement=DiagonalMovement.never)
 path, _ = finder.find_path(origin, destination, tile_grid)
 print(path)
-print(len(path))
+print(len(path) - 1)
 
 
 assert (1, 5, [0, 0, 2, 3, 4, 25, 25]) == line_to_elevations("aScdeEz")
