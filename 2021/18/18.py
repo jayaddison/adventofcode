@@ -101,13 +101,13 @@ class SnailfishParser(NodeVisitor):
     grammar = Grammar(
         """
         snailfish = open_bracket left comma right close_bracket
-    
+
         left = number
              / snailfish
-    
+
         right = number
               / snailfish
-    
+
         open_bracket = "["
         close_bracket = "]"
         comma = ","
