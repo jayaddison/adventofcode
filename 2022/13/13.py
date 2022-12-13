@@ -107,3 +107,4 @@ assert compare([1], [2]) == True  # lower integer first
 assert compare([1, 2], [2]) == True  # left items exhausted; all lower than corresponding right items
 assert compare([3, 2], [1]) == False
 assert compare([1], [2, 3]) == True
+assert compare([1, 2, 3, 4, 5], [1, 2, 5, 4, 5]) == True
