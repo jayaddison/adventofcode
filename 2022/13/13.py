@@ -85,6 +85,8 @@ def compare(left, right):
            while True:
                left_item = next(left, None)
                right_item = next(right, None)
+               if left_item is None and right_item is None:
+                   break
                if left_item is None:
                    return True
                if right_item is None:
