@@ -23,7 +23,7 @@ for i, line in enumerate(content.splitlines()):
 (start_y, start_x), (end_y, end_x) = start_position, end_position
 
 from pathfinding.core.grid import Grid
-from pathfinding.finder.best_first import BestFirst
+from pathfinding.finder.breadth_first import BreadthFirstFinder
 from pathfinding.core.diagonal_movement import DiagonalMovement
 
 class TileGrid(Grid):
@@ -39,7 +39,7 @@ class TileGrid(Grid):
 tile_grid = TileGrid(matrix=grid)
 origin = tile_grid.node(start_x, start_y)
 destination = tile_grid.node(end_x, end_y)
-finder = BestFirst(diagonal_movement=DiagonalMovement.never)
+finder = BreadthFirstFinder(diagonal_movement=DiagonalMovement.never)
 path, _ = finder.find_path(origin, destination, tile_grid)
 print(path)
 print(len(path) - 1)
