@@ -1,3 +1,5 @@
+from functools import cmp_to_key
+
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
@@ -103,23 +105,27 @@ def compare(left, right):
             return compare(left, [right])
 
 
+def sort_compare(left, right):
+    comparison = compare(left, right)
+    if comparison is True:
+        return -1
+    if comparison is False:
+        return 1
+    return 0
+
+
 content = open("13.txt").read().splitlines()
 lines = []
 pairing, total = 1, 0
 for line in content:
     if line:
-        lines.append(line)
-    if len(lines) == 2:
-        left_line, right_line = lines
-        left = NestedIntegerListParser(left_line).process()
-        right = NestedIntegerListParser(right_line).process()
-        if compare(left, right) is True:
-            print(pairing)
-            total += pairing
-        lines.clear()
-        pairing += 1
-print(total)
+        lines.append(NestedIntegerListParser(line).process())
 
+dividers = [ [[2]], [[6]] ]
+lines.extend(dividers)
+lines = sorted(lines, key=cmp_to_key(sort_compare))
+indices = [lines.index(divider) + 1 for divider in dividers]
+print(indices)
 
 assert compare(1, 2) == True  # left item is lower
 assert compare(2, 1) == False
