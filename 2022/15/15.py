@@ -66,7 +66,8 @@ for y in range(min_y - 1, max_y + 2):
 
 Y = 10
 within_range = 0
-for x in range(min_x - 1, max_x + 2):
+max_range = max(v for k, v in sensor_ranges.items()) + 1
+for x in range(min_x - max_range, max_x + max_range):
     position = x, Y
     for sensor, sensor_range in sensor_ranges.items():
         if position in beacons or position in sensors:
