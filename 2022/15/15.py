@@ -49,6 +49,38 @@ sensor_ranges = {
 }
 
 
+def turn(direction_x, direction_y):
+    match direction_x, direction_y:
+        case (-1, 0):
+            return (1, -1)
+        case (1, 0):
+            return (-1, 1)
+        case (0, 1):
+            return (-1, -1)
+        case (0, -1):
+            return (1, 1)
+
+
+def boundary(entity_x, entity_y, entity_range):
+    results = {}
+    for direction_x, direction_y in (-1, 0), (1, 0), (0, 1), (0, -1):
+
+        # Find the boundary point in each cardinal direction
+        boundary_x, boundary_y = entity_x + direction_x, entity_y + direction_y
+        while distance(entity_x, entity_y, boundary_x, boundary_y) <= entity_range:
+            boundary_x += direction_x
+            boundary_y += direction_y
+        results[(boundary_x, boundary_y)] = turn(direction_x, direction_y)
+
+    # Trace from each cardinal boundary point to the next
+    for (boundary_x, boundary_y), (turn_x, turn_y) in results.items():
+        yield boundary_x, boundary_y
+        while (boundary_x + turn_x, boundary_y + turn_y) not in results:
+            boundary_x += turn_x
+            boundary_y += turn_y
+            yield boundary_x, boundary_y
+
+
 Y = 10
 within_range = 0
 max_range = max(v for k, v in sensor_ranges.items()) + 1
@@ -64,3 +96,14 @@ print(within_range)
 
 
 assert distance(2, 0, -2, 2) == 6
+assert set(boundary(0, 0, 1)) == {
+    ( 0,  2),
+    (-1,  1),
+    (-2,  0),
+    (-1, -1),
+    ( 0, -2),
+    ( 1, -1),
+    ( 2,  0),
+    ( 1,  1),
+    ( 0,  2),
+}
