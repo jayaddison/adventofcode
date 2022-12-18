@@ -88,11 +88,24 @@ boundary_counter = Counter()
 for sensor, sensor_range in sensor_ranges.items():
     for boundary_position in boundary(*sensor, sensor_range):
         boundary_counter[boundary_position] += 1
+
+candidates = Counter()
+for (boundary_x, boundary_y), count in boundary_counter.items():
+    if not 0 <= boundary_x <= range_limit:
+        continue
+    if not 0 <= boundary_y <= range_limit:
+        continue
+    position = boundary_x, boundary_y
+    for sensor, sensor_range in sensor_ranges.items():
+        if distance(*position, *sensor) <= sensor_range:
+            break
+    else:
+        candidates[position] += count
+
 (common_x, common_y), _ = boundary_counter.most_common(1)[0]
 assert 0 <= common_x <= range_limit
 assert 0 <= common_y <= range_limit
 print(f"{common_x * range_limit + common_y}")
-
 
 assert distance(2, 0, -2, 2) == 6
 assert set(boundary(0, 0, 1)) == {
