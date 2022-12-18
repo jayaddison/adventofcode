@@ -49,21 +49,6 @@ sensor_ranges = {
 }
 
 
-# Produce a map of the surroundings
-for y in range(min_y - 1, max_y + 2):
-    for x in range(min_x - 1, max_x + 2):
-        is_beacon = (x, y) in beacons
-        is_sensor = (x, y) in sensors
-        symbol = "."
-        for sensor, sensor_range in sensor_ranges.items():
-            if distance(x, y, *sensor) <= sensor_range:
-                symbol = "#"
-                break
-        symbol = "B" if is_beacon else "S" if is_sensor else symbol
-        print(symbol, end="")
-    print()
-
-
 Y = 10
 within_range = 0
 max_range = max(v for k, v in sensor_ranges.items()) + 1
