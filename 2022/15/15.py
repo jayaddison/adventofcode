@@ -83,7 +83,7 @@ def boundary(entity_x, entity_y, entity_range):
 
 from collections import Counter
 
-range_limit = int(input("What's the range limit?\n"))
+coordinate_limit = int(input("What's the co-ordinate limit?\n"))
 boundary_counter = Counter()
 for sensor, sensor_range in sensor_ranges.items():
     for boundary_position in boundary(*sensor, sensor_range):
@@ -91,9 +91,9 @@ for sensor, sensor_range in sensor_ranges.items():
 
 candidates = Counter()
 for (boundary_x, boundary_y), count in boundary_counter.items():
-    if not 0 <= boundary_x <= range_limit:
+    if not 0 <= boundary_x <= coordinate_limit:
         continue
-    if not 0 <= boundary_y <= range_limit:
+    if not 0 <= boundary_y <= coordinate_limit:
         continue
     position = boundary_x, boundary_y
     for sensor, sensor_range in sensor_ranges.items():
@@ -103,9 +103,9 @@ for (boundary_x, boundary_y), count in boundary_counter.items():
         candidates[position] += count
 
 (common_x, common_y), _ = candidates.most_common(1)[0]
-assert 0 <= common_x <= range_limit
-assert 0 <= common_y <= range_limit
-print(f"{common_x * range_limit + common_y}")
+assert 0 <= common_x <= coordinate_limit
+assert 0 <= common_y <= coordinate_limit
+print(f"{common_x * coordinate_limit + common_y}")
 
 assert distance(2, 0, -2, 2) == 6
 assert set(boundary(0, 0, 1)) == {
