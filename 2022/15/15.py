@@ -81,18 +81,17 @@ def boundary(entity_x, entity_y, entity_range):
             yield boundary_x, boundary_y
 
 
-Y = 10
-within_range = 0
-max_range = max(v for k, v in sensor_ranges.items()) + 1
-for x in range(min_x - max_range, max_x + max_range):
-    position = x, Y
-    for sensor, sensor_range in sensor_ranges.items():
-        if position in beacons or position in sensors:
-            continue
-        if distance(*position, *sensor) <= sensor_range:
-            within_range += 1
-            break
-print(within_range)
+from collections import Counter
+
+range_limit = int(input("What's the range limit?\n"))
+boundary_counter = Counter()
+for sensor, sensor_range in sensor_ranges.items():
+    for boundary_position in boundary(*sensor, sensor_range):
+        boundary_counter[boundary_position] += 1
+(common_x, common_y), _ = boundary_counter.most_common(1)[0]
+assert 0 <= common_x <= range_limit
+assert 0 <= common_y <= range_limit
+print(f"{common_x * range_limit + common_y}")
 
 
 assert distance(2, 0, -2, 2) == 6
