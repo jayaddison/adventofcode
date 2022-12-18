@@ -102,7 +102,7 @@ for (boundary_x, boundary_y), count in boundary_counter.items():
     else:
         candidates[position] += count
 
-(common_x, common_y), _ = boundary_counter.most_common(1)[0]
+(common_x, common_y), _ = candidates.most_common(1)[0]
 assert 0 <= common_x <= range_limit
 assert 0 <= common_y <= range_limit
 print(f"{common_x * range_limit + common_y}")
