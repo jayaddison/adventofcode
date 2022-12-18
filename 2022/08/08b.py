@@ -28,7 +28,7 @@ for i in range(0, len(grid)):
         print(grid[i][j], end='')
     print()
 
+maximum = 0
 for i in range(0, len(grid)):
-    for j in range(0, len(grid[i])):
-        print(f"  {scores[i][j]}  ", end='')
-    print()
+    maximum = max(maximum, *scores[i].values())
+print(maximum)
