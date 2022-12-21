@@ -23,9 +23,10 @@ for number in numbers:
 nodes[0].prev, nodes[-1].next = nodes[-1], nodes[0]
 
 for node in nodes:
-    if node.value == 0:
+    moves = abs(node.value) % (len(nodes) * 2)
+    if moves == 0:
         continue
-    for _ in range(abs(node.value)):
+    for _ in range(moves):
         if node.value > 0:
             a, b, c, d = node.prev, node, node.next, node.next.next
             a.next = c
