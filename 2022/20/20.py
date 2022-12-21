@@ -1,5 +1,7 @@
 content = open("20.txt").read()
 numbers = content.splitlines()
+encryption_key = int(input("What is the encryption key?\n") or 1)
+cycles = int(input("And how many encryption cycles should be applied?\n") or 1)
 
 
 class Node:
@@ -14,7 +16,7 @@ class Node:
 nodes = []
 prev = None
 for number in numbers:
-    node = Node(int(number), prev)
+    node = Node(int(number) * encryption_key, prev)
     nodes.append(node)
     prev = node
 
@@ -22,27 +24,28 @@ for number in numbers:
 # Make the linked list into a circular list
 nodes[0].prev, nodes[-1].next = nodes[-1], nodes[0]
 
-for node in nodes:
-    moves = abs(node.value) % (len(nodes) * 2)
-    if moves == 0:
-        continue
-    for _ in range(moves):
-        if node.value > 0:
-            a, b, c, d = node.prev, node, node.next, node.next.next
-            a.next = c
-            c.prev = a
-            c.next = b
-            b.prev = c
-            b.next = d
-            d.prev = b
-        else:
-            w, x, y, z = node.prev.prev, node.prev, node, node.next
-            z.prev = x
-            x.next = z
-            x.prev = y
-            y.next = x
-            y.prev = w
-            w.next = y
+for _ in range(cycles):
+    for node in nodes:
+        moves = abs(node.value) % (len(nodes) * 2)
+        if moves == 0:
+            continue
+        for _ in range(moves):
+            if node.value > 0:
+                a, b, c, d = node.prev, node, node.next, node.next.next
+                a.next = c
+                c.prev = a
+                c.next = b
+                b.prev = c
+                b.next = d
+                d.prev = b
+            else:
+                w, x, y, z = node.prev.prev, node.prev, node, node.next
+                z.prev = x
+                x.next = z
+                x.prev = y
+                y.next = x
+                y.prev = w
+                w.next = y
 
 zero_node = None
 for node in nodes:
