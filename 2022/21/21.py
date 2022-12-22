@@ -17,7 +17,7 @@ for room_id, definition in room_definitions.items():
         room_formulae[room_id] = definition
     else:
         formula = [room_mapping.get(value) or value for value in definition.split()]
-        room_formulae[room_id] = "=" + "".join(formula)
+        room_formulae[room_id] = "= " + " ".join(formula)
 
 
 spreadsheet = formulas.ExcelModel().from_dict(room_formulae)
