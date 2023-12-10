@@ -12,8 +12,8 @@ for y, line in enumerate(content.splitlines()):
         if char.isdigit():
             part_number += char
         else:
-            if char != ".":
-                symbol_grid[y][x] = char
+            if char == "*":
+                symbol_grid[y][x] = []
             if part_number:
                 part_grid[y][x - len(part_number)] = part_number
                 part_number = ""
@@ -28,7 +28,7 @@ for y, part_map in part_grid.items():
         for yoffset in (-1, 0, 1):
             for xoffset in range(-1, len(part_number) + 1):
                 try:
-                    symbol_grid[y + yoffset][x + xoffset]
+                    symbol_grid[y + yoffset][x + xoffset].append(int(part_number))
                     if y not in filtered_grid:
                         filtered_grid[y] = {}
                     filtered_grid[y][x] = part_number
@@ -37,7 +37,8 @@ for y, part_map in part_grid.items():
 
 # Sum the filtered part numbers
 total = 0
-for y, part_map in filtered_grid.items():
-    for x, part_number in part_map.items():
-        total += int(part_number)
+for y, part_map in symbol_grid.items():
+    for x, part_numbers in part_map.items():
+        if len(part_numbers) == 2:
+            total += (part_numbers[0] * part_numbers[1])
 print(total)
