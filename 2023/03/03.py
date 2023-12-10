@@ -17,6 +17,9 @@ for y, line in enumerate(content.splitlines()):
             if part_number:
                 part_grid[y][x - len(part_number)] = part_number
                 part_number = ""
+    if part_number:
+        part_grid[y][x - len(part_number)] = part_number
+        part_number = ""
 
 # Filter the part numbers to cases where a symbol is adjacent
 filtered_grid = {}
