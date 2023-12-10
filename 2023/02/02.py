@@ -15,16 +15,12 @@ for line in content.splitlines():
             count, colour = measurement.strip().split(" ")
             games[game_id][colour].append(int(count))
 
-# Set acceptable thresholds
-THRESHOLDS = {
-    "red": 12,
-    "green": 13,
-    "blue": 14,
-}
-
-# Filter acceptable games
+# Sum the per-game multiples of the required number of colours
 total = 0
-for game_id, counts in games.items():
-    acceptable = all(max(counts[colour]) <= threshold for colour, threshold in THRESHOLDS.items())
-    total += game_id if acceptable else 0
+for _, counts in games.items():
+    limits = [max(counts[colour]) for colour in counts]
+    power = 1
+    for limit in limits:
+        power *= limit
+    total += power
 print(total)
