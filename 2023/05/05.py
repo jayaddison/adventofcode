@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 content = open("05.txt").read()
 
 seeds = []
@@ -21,10 +23,9 @@ for line in content.splitlines():
         continue
 
     destination_start, source_start, range_length = map(int, line.split())
-    for x in range(range_length):
-        mappings[prev] = mappings.get(prev, {})
-        mappings[prev][current] = mappings[prev].get(current, {})
-        mappings[prev][current][source_start + x] = destination_start + x
+    mappings[prev] = mappings.get(prev, {})
+    mappings[prev][current] = mappings[prev].get(current, defaultdict(list))
+    mappings[prev][current][(source_start, source_start + range_length)] = destination_start
 
 
 # Evaluate the result for each seed
@@ -32,7 +33,11 @@ min_result = None
 for seed in seeds:
     prev = "seed"
     for current in path:
-        seed = mappings[prev][current].get(seed, seed)
+        for (range_from, range_to), destination_start in mappings[prev][current].items():
+            if range_from <= seed <= range_to:
+                offset = seed - range_from
+                seed = destination_start + offset
+                break
         prev = current
     min_result = min(seed, min_result or seed)
 print(min_result)
