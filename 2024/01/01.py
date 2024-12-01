@@ -1,3 +1,4 @@
+from collections import Counter
 import sys
 
 lefts, rights = [], []
@@ -13,3 +14,10 @@ for left, right in zip(lefts_sorted, rights_sorted):
     total_difference += difference
 
 print(total_difference)
+
+total_similarity = 0
+rights_count = Counter(rights)
+for left in lefts:
+    total_similarity += left * rights_count[left]
+
+print(total_similarity)
