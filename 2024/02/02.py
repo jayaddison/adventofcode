@@ -7,12 +7,19 @@ for line in sys.stdin.read().splitlines():
 
 status = []
 for row in rows:
+    problem_encountered = False
     diffs, directions = set(), set()
     prev, direction = None, None
     for level in row:
         if prev:
-            diffs.add(abs(prev - level))
-            directions.add(1 if level > prev else -1)
+            diff = abs(prev - level)
+            direction = 1 if level > prev else -1
+            if not 1 <= diff <= 3 or directions and direction not in directions:
+                if not problem_encountered:
+                    problem_encountered = True
+                    continue
+            diffs.add(diff)
+            directions.add(direction)
         prev = level
 
     safe = len(directions) == 1 and all(1 <= diff <= 3 for diff in diffs)
