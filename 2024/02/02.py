@@ -8,7 +8,7 @@ for line in sys.stdin.read().splitlines():
 status = []
 for row in rows:
     problem_encountered = False
-    diffs, directions = set(), set()
+    diffs, directions = set(), list()
     prev, direction = None, None
     for level in row:
         if prev:
@@ -19,10 +19,11 @@ for row in rows:
                     problem_encountered = True
                     continue
             diffs.add(diff)
-            directions.add(direction)
+            directions.append(direction)
         prev = level
 
-    safe = len(directions) == 1 and all(1 <= diff <= 3 for diff in diffs)
+    safe = len(set(directions)) == 1 and all(1 <= diff <= 3 for diff in diffs)
+    print(f'{safe}: {row} ({problem_encountered})')
     status.append(safe)
 
 print(sum(status))
