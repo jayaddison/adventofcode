@@ -14,7 +14,7 @@ for row in rows:
             diffs.add(abs(prev - level))
             directions.add(1 if level > prev else -1)
         prev = level
-    
+
     safe = len(directions) == 1 and all(1 <= diff <= 3 for diff in diffs)
     status.append(safe)
 
