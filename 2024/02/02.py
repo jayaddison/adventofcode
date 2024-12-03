@@ -16,6 +16,9 @@ for row in rows:
             direction = 1 if level > prev else -1
             if not 1 <= diff <= 3 or directions and direction not in directions:
                 if not problem_encountered:
+                    # edge case: direction change due to problem level
+                    if len(directions) == 1:
+                        directions = [direction]
                     problem_encountered = True
                     continue
             diffs.add(diff)
