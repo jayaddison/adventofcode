@@ -18,7 +18,7 @@ for row in rows:
                 if not problem_encountered:
                     # edge case: direction change due to problem level
                     if len(directions) == 1:
-                        directions = []
+                        directions = [direction]
                     problem_encountered = True
                     continue
             diffs.add(diff)
