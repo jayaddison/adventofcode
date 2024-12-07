@@ -1,9 +1,10 @@
+from collections import defaultdict
 import sys
 
 UP, RIGHT, DOWN, LEFT = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
 height, width, obstacles = 0, 0, {}
-guard_position, guard_direction, guard_path = None, None, set()
+guard_position, guard_direction, guard_path = None, None, defaultdict(set)
 
 def print_map():
     for idy in range(height + 1):
@@ -41,7 +42,7 @@ print(guard_direction)
 
 guard_y, guard_x = guard_position
 while 0 <= guard_y <= height and 0 <= guard_x <= width:
-    guard_path.add(guard_position)
+    guard_path[guard_position].add(guard_direction)
     move_y, move_x = guard_direction
     if (guard_y + move_y, guard_x + move_x) in obstacles:
         guard_direction = rotate(guard_direction)
