@@ -19,6 +19,7 @@ for line in sys.stdin.read().splitlines():
         for page in update:
             for deferred in list(pending):
                 if all(dependency in relevant and dependency in resolved for dependency in dependencies[deferred]):
+                    resolved.add(deferred)
                     reordered.append(deferred)
                     pending.remove(deferred)
             if any(dependency in relevant and dependency not in resolved for dependency in dependencies[page]):
