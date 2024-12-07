@@ -52,10 +52,6 @@ def would_loop(hypothetical_position, hypothetical_direction):
     while 0 <= hypothetical_y <= height and 0 <= hypothetical_x <= width:
         hypothetical_y += move_y
         hypothetical_x += move_x
-        hypothetical_position = (hypothetical_y, hypothetical_x)
-
-        if hypothetical_direction in guard_path.get(hypothetical_position, []):
-            return True
 
     return False
 
