@@ -1,9 +1,13 @@
 import itertools
 import sys
 
+def concatenate(a: int, b: int) -> int:
+    return int(f'{a}{b}')
+
 operators = {
     '*': int.__mul__,
     '+': int.__add__,
+    '||': concatenate,
 }
 
 result = 0
