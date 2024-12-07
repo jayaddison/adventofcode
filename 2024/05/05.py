@@ -33,7 +33,11 @@ for line in sys.stdin.read().splitlines():
             midpoint = update[int(len(update) / 2)]
             result += midpoint
         else:
-            reordered += list(pending)
+            while len(pending):
+                next_resolved = next(item for item in pending if all(dependency not in relevant or dependency in resolved for dependency in dependencies[item]))
+                resolved.add(next_resolved)
+                reordered.append(next_resolved)
+                pending.remove(next_resolved)
             midpoint = reordered[int(len(reordered) / 2)]
             result_part_two += midpoint
 print(result)
