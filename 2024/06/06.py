@@ -83,7 +83,6 @@ while 0 <= guard_y <= height and 0 <= guard_x <= width:
         if would_loop(guard_position, next_direction):
             loop_obstacle_position = (guard_y + move_y, guard_x + move_x)
             loop_obstacles[loop_obstacle_position] = True
-            break
 
     print_map()
 
