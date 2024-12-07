@@ -13,8 +13,11 @@ def print_map():
                 print('!', end='')
             elif (idy, idx) in obstacles:
                 print('#', end='')
-            elif (idy, idx) in guard_path:
-                print('X', end='')
+            elif directions := guard_path[(idy, idx)]:
+                horizontal = LEFT in directions or RIGHT in directions
+                vertical = UP in directions or DOWN in directions
+                symbol = '+' if horizontal and vertical else '-' if horizontal else '|'
+                print(symbol, end='')
             elif (idy, idx) == guard_position:
                 print('@', end='')
             else:
