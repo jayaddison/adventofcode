@@ -72,9 +72,17 @@ while 0 <= guard_y <= height and 0 <= guard_x <= width:
     guard_position = (guard_y, guard_x)
 
     # hypothetical: would the guard revisit a previous location + direction if they rotated and continued from here?
-    if would_loop(guard_position, rotate(guard_direction)):
-        loop_obstacle_position = (guard_y + move_y, guard_x + move_x)
-        loop_obstacles[loop_obstacle_position] = True
+    possible_directions, next_direction = [], guard_direction
+    while next_direction := rotate(next_direction):
+        if next_direction == guard_direction:
+            break
+        possible_y, possible_x = next_direction
+        if (guard_y + possible_y, guard_x + possible_x) in obstacles:
+            continue
+
+        if would_loop(guard_position, next_direction):
+            loop_obstacle_position = (guard_y + move_y, guard_x + move_x)
+            loop_obstacles[loop_obstacle_position] = True
 
     print_map()
 
