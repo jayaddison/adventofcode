@@ -2,6 +2,7 @@ from collections import defaultdict
 import sys
 
 result = 0
+result_part_two = 0
 dependencies = defaultdict(set)
 for line in sys.stdin.read().splitlines():
     if not line.strip():
@@ -13,18 +14,30 @@ for line in sys.stdin.read().splitlines():
         satisfiable = True
         resolved = set()
         update = list(map(int, line.split(',')))
+        reordered, pending = [], set()
         relevant = set(update)
         for page in update:
-            if page in dependencies:
-                 if any(
+            for deferred in list(pending):
+                if all(dependency in resolved for dependency in dependencies[deferred]):
+                    reordered.append(deferred)
+                    pending.remove(deferred)
+            if page in dependencies \
+                 and any(
                      dependency in relevant
                      and dependency not in resolved
                      for dependency in dependencies[page]
                  ):
                      satisfiable = False
-                     break
+                     pending.add(page)
+            else:
+                reordered.append(page)
             resolved.add(page)
         if satisfiable:
             midpoint = update[int(len(update) / 2)]
             result += midpoint
+        else:
+            reordered += list(pending)
+            midpoint = reordered[int(len(reordered) / 2)]
+            result_part_two += midpoint
 print(result)
+print(result_part_two)
