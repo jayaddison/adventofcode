@@ -18,18 +18,10 @@ for line in sys.stdin.read().splitlines():
         relevant = set(update)
         for page in update:
             for deferred in list(pending):
-                if all(
-                    dependency in relevant
-                    and dependency in resolved
-                    for dependency in dependencies[deferred]
-                ):
+                if all(dependency in relevant and dependency in resolved for dependency in dependencies[deferred]):
                     reordered.append(deferred)
                     pending.remove(deferred)
-            if any(
-                dependency in relevant
-                and dependency not in resolved
-                for dependency in dependencies[page]
-            ):
+            if any(dependency in relevant and dependency not in resolved for dependency in dependencies[page]):
                 satisfiable = False
                 pending.add(page)
             else:
