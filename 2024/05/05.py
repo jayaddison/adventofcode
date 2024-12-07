@@ -27,7 +27,8 @@ for line in sys.stdin.read().splitlines():
                 pending.add(page)
             else:
                 reordered.append(page)
-            resolved.add(page)
+            if page not in pending:
+                resolved.add(page)
         if satisfiable:
             midpoint = update[int(len(update) / 2)]
             result += midpoint
