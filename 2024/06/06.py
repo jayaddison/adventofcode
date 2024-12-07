@@ -52,6 +52,8 @@ while 0 <= guard_y <= height and 0 <= guard_x <= width:
     guard_x += move_x
     guard_position = (guard_y, guard_x)
 
+    # hypothetical: would the guard revisit a previous location + direction if they rotated and continued from here?
+
     print_map()
 
 print(len(guard_path))
