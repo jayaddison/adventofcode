@@ -3,13 +3,15 @@ import sys
 
 UP, RIGHT, DOWN, LEFT = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
-height, width, obstacles = 0, 0, {}
+height, width, obstacles, loop_obstacles = 0, 0, {}, {}
 guard_position, guard_direction, guard_path = None, None, defaultdict(set)
 
 def print_map():
     for idy in range(height + 1):
         for idx in range(width + 1):
-            if (idy, idx) in obstacles:
+            if (idy, idx) in loop_obstacles:
+                print('!', end='')
+            elif (idy, idx) in obstacles:
                 print('#', end='')
             elif (idy, idx) in guard_path:
                 print('X', end='')
@@ -40,6 +42,16 @@ for idy, row in enumerate(sys.stdin.read().splitlines()):
 print(guard_position)
 print(guard_direction)
 
+def would_loop(hypothetical_position, hypothetical_direction):
+    hypothetical_y, hypothetical_x = hypothetical_position
+    move_y, move_x = hypothetical_direction
+
+    while 0 <= hypothetical_y <= height and 0 <= hypothetical_x <= width:
+        hypothetical_y += move_y
+        hypothetical_x += move_x
+
+    return None
+
 guard_y, guard_x = guard_position
 while 0 <= guard_y <= height and 0 <= guard_x <= width:
     guard_path[guard_position].add(guard_direction)
@@ -53,7 +65,10 @@ while 0 <= guard_y <= height and 0 <= guard_x <= width:
     guard_position = (guard_y, guard_x)
 
     # hypothetical: would the guard revisit a previous location + direction if they rotated and continued from here?
+    if loop_obstacle := would_loop(guard_position, rotate(guard_direction)):
+        loop_obstacles[guard_position] = True
 
     print_map()
 
 print(len(guard_path))
+print(len(loop_obstacles))
