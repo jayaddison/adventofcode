@@ -53,7 +53,7 @@ def would_loop(hypothetical_position, hypothetical_direction):
         hypothetical_y += move_y
         hypothetical_x += move_x
 
-    return False
+    return None
 
 guard_y, guard_x = guard_position
 while 0 <= guard_y <= height and 0 <= guard_x <= width:
@@ -68,7 +68,7 @@ while 0 <= guard_y <= height and 0 <= guard_x <= width:
     guard_position = (guard_y, guard_x)
 
     # hypothetical: would the guard revisit a previous location + direction if they rotated and continued from here?
-    if would_loop(guard_position, rotate(guard_direction)):
+    if loop_obstacle := would_loop(guard_position, rotate(guard_direction)):
         loop_obstacles[guard_position] = True
 
     print_map()
