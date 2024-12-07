@@ -57,3 +57,23 @@ found = 0
 for path in generate_paths(grid):
     found += path.count('XMAS')
 print(found)
+
+def generate_subgrids(grid):
+    for idy in range(len(grid) - 3 + 1):
+        for idx in range(len(grid[0]) - 3 + 1):
+            yield [
+                grid[idy + 0][idx:idx + 3],
+                grid[idy + 1][idx:idx + 3],
+                grid[idy + 2][idx:idx + 3],
+            ]
+
+x_shape_count = 0
+for subgrid in generate_subgrids(grid):
+    diagonals = []
+    for diagonal in generate_diagonals(subgrid):
+        if len(diagonal) == 3:
+            diagonals.append(diagonal)
+            diagonals.append(diagonal[::-1])
+    if len([diagonal for diagonal in diagonals if diagonal == 'MAS']) == 2:
+        x_shape_count += 1
+print(x_shape_count)
