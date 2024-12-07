@@ -10,7 +10,7 @@ def print_map():
         for idx in range(width + 1):
             if (idy, idx) in obstacles:
                 print('#', end='')
-            elif (idy, idx) == guard_path:
+            elif (idy, idx) in guard_path:
                 print('X', end='')
             elif (idy, idx) == guard_position:
                 print('@', end='')
