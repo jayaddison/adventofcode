@@ -9,12 +9,14 @@ antinodes = set()
 def generate_antinodes(a, b):
     (a_y, a_x), (b_y, b_x) = a, b
     (delta_y, delta_x) = (b_y - a_y), (b_x - a_x)
-    antinode_alpha = (a_y - delta_y, a_x - delta_x)
-    antinode_omega = (b_y + delta_y, b_x + delta_x)
-    for antinode in antinode_alpha, antinode_omega:
-        antinode_y, antinode_x = antinode
-        if 0 <= antinode_y <= height and 0 <= antinode_x <= width:
-            yield antinode
+    while 0 <= a_y < height and 0 <= a_x <= width:
+        yield (a_y, a_x)
+        a_y -= delta_y
+        a_x -= delta_x
+    while 0 <= b_y < height and 0 <= b_x <= width:
+        yield (b_y, b_x)
+        b_y += delta_y
+        b_x += delta_x
 
 for idy, line in enumerate(sys.stdin.read().splitlines()):
     height = max(height, idy)
